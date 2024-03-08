@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+
+  <link rel="icon" href="./img/logo.png" />
+  <!-- <link rel="stylesheet" href="./fonts/font.css" /> -->
+
+  <link rel="stylesheet" href="./css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/jq22.css" />
+  <script src="js/updated_monitor_data.js"></script>
+  <title>Remote Monitor</title>
+  <style>
+    .BMap_scaleTxt {
+      color: #fff !important;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <div class="main" id="appIndex">
+    <div class="header">
+      <div class="container">
+        <div class="d-flex justify-content-center align-items-end" style="flex-wrap: wrap;">
+          <img class="flex-item" src="img/logo.png" style="flex: 0 1 auto; width: 10%; max-width: 100px;" />
+          <img class="flex-item" src="img/title.png"
+            style="flex: 0 1 auto; width: 35%; max-width: 350px; margin-left: 1%;" />
+          <div class="flex-item" style="flex: 0 1 auto; color:#fff; text-align: center;">
+            <span id="time">{{ year }}-{{ month }}-{{ date }}&nbsp;&nbsp; {{ hour }}:{{ minute }}:{{ second
+              }}&nbsp;&nbsp; {{ strDate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="content row">
+
+        <div class="leftBox col-lg-3 col-md-3 col-sm-12">
+          <div class="pingfen">
+            <div>
+              <div class="pfTitle">
+                <img style="width: 30px; height: 30px;" src="img/fan_logo.png" />
+                <span class="titleText">Fan Control</span>
+              </div>
+              <div class="pfcontent" style="display: flex; align-items: center;">
+                <div style="height: 100%; display: flex; align-items: center;" class="leftBox">
+                  <input id="fanSpeed" type="number" class="form-control" min="0" max="100"
+                    onkeypress="handleKeyPress(event)">
+
+                </div>
+                <div style="padding-left: 20px;" class="leftBox">
+                  <div id="echartAqpf" style="width:105px;height:85px;">
+
+                  </div>
+                  <span>Fan Speed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="paimin">
+            <div>
+              <div class="pfTitle" style="margin-bottom: 30px;">
+                <img style="width: 30px; height: 30px; margin-right: 10px;" src="img/model-icon.png" />
+                <span class="titleText">Current Model</span>
+              </div>
+              <div id="FontScroll">
+                <img style="width: 100%; height: 100%;" src="img/model.png" />
+              </div>
+            </div>
+          </div>
+          <div class="top10">
+            <div>
+              <div class="pfTitle" style="margin-bottom: 30px;">
+                <img style="width: 30px; height: 30px; margin-right: 10px;" src="img/data-icon.png" />
+                <span class="titleText">Extra Data</span>
+              </div>
+              <div style="margin: auto;width: 80%;height: 75%;">
+
+                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Success example"
+                  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+
+                  <div class="progress-bar bg-success overflow-visible text-dark" style="width: 25%">Data1: 25%</div>
+                </div>
+                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Info example"
+                  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar bg-info text-dark overflow-visible text-dark" style="width: 50%">Data2:50%
+                  </div>
+                </div>
+                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Warning example"
+                  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar bg-warning text-dark overflow-visible text-dark" style="width: 75%">Data3:75%
+                  </div>
+                </div>
+                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Danger example"
+                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar bg-danger overflow-visible text-dark" style="width: 100%">Data4: 100%</div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="middleBox col-lg-6 col-md-6 col-sm-12">
+          <div class="baiduMap">
+
+            <div id="container-live-camera">
+              <img id="live-camera" style="width: 100%; height: 100%;" src="http://127.0.0.1:5000/video_feed"></iframe>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="rightBox col-lg-3 col-md-3 col-sm-12">
+
+          <div class="weihutj">
+            <div>
+              <div class="pfTitle iconAndText ">
+                <img style="width: 15%; " src="img/estimated-wind-icon.png" />
+                <span class="textOnly">Estimated Wind Speed</span>
+              </div>
+              <div id="echartestwin" style="width:25%;height: 50%;margin:auto;"></div>
+
+            </div>
+          </div>
+
+          <div class="weihutj">
+            <div>
+              <div class="pfTitle iconAndText ">
+                <img style="width: 15%;" src="img/estimated-wind-icon.png" />
+                <span class="textOnly">Measured Wind Speed</span>
+              </div>
+              <div id="echartactwin" style="width:25%;height: 50%;margin:auto;"></div>
+
+            </div>
+          </div>
+
+          <div class="guzhangtj">
+            <div>
+              <div class="pfTitle iconAndText ">
+                <img style="width: 15%;" src="img/frequency-icon.png" />
+                <span class="textOnly">Vortex Shedding Frequency
+              </div>
+              <div id="echartshedding" style="width:25%;height: 50%;margin:auto;"></div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="content row">
+        <div class="middleBox col-lg-12 col-md-12 col-sm-12">
+          <div class="baiduMap">
+
+            <div id="container-live-data">
+              <div id="echartdisplaydata" style="width:100%;height: 50%;margin:auto;"></div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+    <div id="toastBody" class="toast-body">
+    </div>
+  </div>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/vue.min.js"></script>
+  <script src="js/echarts.min.js"></script>
+  <script src="js/walden.js"></script>
+  <script src="js/roma.js"></script>
+  <script src="js/jquery.countUp.js"></script>
+  <script src="js/main.js"></script>
+
+  <script src="js/echart.js"></script>
+  <script>
+    var retryCount = 0;
+    var maxRetries = 5;
+
+    document.getElementById('live-camera').onerror = function () {
+      if (retryCount < maxRetries) {
+        console.log('Stream lost. Attempting to reconnect... Attempt number: ' + (retryCount + 1));
+        showToast('Stream lost. Attempting to reconnect... Attempt number: ' + (retryCount + 1), 'failed');
+        setTimeout(() => {
+          this.src = this.src;
+          retryCount++;
+        }, 2000); // 1000 milliseconds = 1 second
+      } else {
+        console.log('Max retry attempts reached. Stopping reconnect attempts.');
+        showToast('Max retry attempts reached. Stopping reconnect attempts.', 'failed');
+      }
+    };
+  </script>
+
+
+</body>
+
+</html>
