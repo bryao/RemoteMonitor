@@ -11,7 +11,7 @@ import requests
 import json
 import socket
 import datetime
-
+import re
 # eventlet.monkey_patch()
 # url = 'https://my-json-server.typicode.com/typicode/demo/profile'
 arduino_ip = '192.168.0.180'  
@@ -36,11 +36,14 @@ def fetch_data():
             start = time.time()
             s.settimeout(1.0)
             # s.send(b'GET /displacement HTTP/1.1\r\n')
-            response = s.recv(26).decode('utf-8')
-            response = response.strip() 
+            response = s.recv(8).decode('utf-8')
+            response = re.findall(r'[-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?', response)
             # print("Time:",time.time()-start)
-            print(response)
-            return float( json.loads(response)['displacement'])
+            print(response[0])
+            if (float( response[0]) > 200):
+                return None
+            
+            return float( response[0])
             
         except Exception as e:
             print(e)
