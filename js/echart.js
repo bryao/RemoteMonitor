@@ -64,6 +64,7 @@ myChart4.setOption(option4)
 
 //estimated wind speed
 var myChart5 = echarts.init(document.getElementById('echartactwin'))
+let actwin = 0
 
 option5 = {
     title: {
@@ -119,14 +120,55 @@ option5 = {
             }
         }, {
             name: '02',
-            value: 10
+            value: 1
         }]
     }]
 }
-
-
 // 使用刚指定的配置项和数据显示图表。
 myChart5.setOption(option5)
+
+function updateChart5() {
+    $.get("http://127.0.0.1:5003", function (data) {
+        var velocityValue = data.Velocity;
+        myChart5.setOption({
+            title: {
+                text: velocityValue.toString()
+            },
+            series: [{
+                data: [{
+                    value: parseFloat(velocityValue),
+                    name: '01',
+                    itemStyle: {
+                        normal: {
+                            color: { // 完成的圆环的颜色
+                                colorStops: [{
+                                    offset: 0,
+                                    color: '#00cefc' // 0% 处的颜色
+                                }, {
+                                    offset: 1,
+                                    color: '#367bec' // 100% 处的颜色
+                                }]
+                            },
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            }
+                        }
+                    }
+                }, {
+                    name: '02',
+                    value: 10 - parseFloat(velocityValue)
+                }]
+            }]
+        });
+    });
+}
+
+setInterval(updateChart5, 50);
+
+
 
 
 //estimated wind speed
@@ -254,7 +296,7 @@ function updateChart7() {
                 }
             }, {
                 name: '02',
-                value: 100 - fan_speed 
+                value: 100 - fan_speed
             }]
         }]
     }
@@ -265,103 +307,184 @@ function updateChart7() {
 }
 setInterval(updateChart7, 500);
 
-
-
 var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));
-var option8;
+var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));
 
-$.get(
-  "http://127.0.0.1:5001",
-  function (_rawData) {
-    run(_rawData);
-  }
-);
-function run(_rawData) {
-  // var countries = ['Australia', 'Canada', 'China', 'Cuba', 'Finland', 'France', 'Germany', 'Iceland', 'India', 'Japan', 'North Korea', 'South Korea', 'New Zealand', 'Norway', 'Poland', 'Russia', 'Turkey', 'United Kingdom', 'United States'];
-  const datas = [
-    'Data1',
-    'Data2',
-  ];
-  const seriesList = [];
-  const datasetWithFilters = [];
+var socket = io('127.0.0.1:5002');
+var data_displacement = [];
+var data_displacement_fft = [];
 
-  echarts.util.each(datas, function (data) {
-    
-    var datasetId = 'dataset_' + data;
-    
-    datasetWithFilters.push({
-      id: datasetId,
-      fromDatasetId: 'dataset_raw',
-      transform: {
-        type: 'filter',
-        config: {
-          and: [
-            { dimension: 'Year', gte: 1950 },
-            { dimension: 'Country', '=': data }
-          ]
-        }
-      }
-    });
+var isUpdating = true;
 
-
-
-    seriesList.push({
-      type: 'line',
-      datasetId: datasetId,
-      showSymbol: false,
-      name: data,
-      endLabel: {
-        show: true,
-        formatter: function (params) {
-          return params.value[3] + ': ' + params.value[0];
-        }
-      },
-      labelLayout: {
-        moveOverlap: 'shiftY'
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      encode: {
-        x: 'time',
-        y: 'data',
-        label: ['time', 'data'],
-        itemName: 'time',
-        tooltip: ['data']
-      }
-    });
-  });
-  option8 = {
-    animationDuration: 10000,
-    backgroundColor: '#FFFFFF',
-    dataset: [
-      {
-        id: 'dataset_raw',
-        source: _rawData
-      },
-      ...datasetWithFilters
-    ],
+var option8 = {
+    backgroundColor: '#f5f5f5',
     title: {
-      text: 'Income of Germany and France since 1950'
+        text: 'Raw Displacement',
+        left: 'center', // Aligns the title to the center
+        top: '20', // Position from the top margin
+        textStyle: {
+            color: '#333',
+            fontSize: 18,
+            fontWeight: 'bold'
+        },
+        subtextStyle: {
+            color: '#666',
+            fontSize: 14
+        }
     },
     tooltip: {
-      order: 'valueDesc',
-      trigger: 'axis'
-    },
-    xAxis: {
-      type: 'category',
-      nameLocation: 'end',
-      name: "Time",
-    },
-    yAxis: {
-      name: 'Data'
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            label: {
+                backgroundColor: '#6a7985'
+            }
+        }
     },
     grid: {
-      right: 140
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
     },
-    series: seriesList
-  };
-  myChart8.setOption(option8);
-}
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        scale: true,
+        splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#ddd',
+                type: 'dashed'
+            }
+        },
+        axisLine: {
+            lineStyle: {
+                color: '#333'
+            }
+        }
+    },
+    yAxis: {
+        type: 'value',
+        boundaryGap: false,
+        scale: false,
+        splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#ddd',
+                type: 'dashed'
+            }
+        },
+        axisLine: {
+            lineStyle: {
+                color: '#333'
+            }
+        },
+        scaleLimit: {
+            min: -150,
+            max: 150
+        }
+    },
+    series: [{
+        type: 'line',
+        data: [],
+        symbolSize: 5,
+        animation: false,
+        itemStyle: {
+            color: '#c23531',
+            borderColor: '#222',
+            borderWidth: 1
+        },
+        emphasis: {
+            itemStyle: {
+                borderColor: '#c23531',
+                borderWidth: 2
+            }
+        }
+    }],
+    dataZoom: [
+        {
+            type: 'slider', // This is the most common type of dataZoom.
+            start: 0,      // Starting position of the dataZoom, 0% by default.
+            end: 100       // Ending position of the dataZoom, 100% by default.
+        },
+        {
+            type: 'inside', // This allows zooming by scrolling the mouse wheel.
+            start: 0,
+            end: 100
+        }
+    ],
+    roam: false, // This is necessary for the inside option to work
+};
 
-option8 && myChart8.setOption(option);
+myChart8.setOption(option8);
+myChart9.setOption(option8);
+myChart9.setOption({
+    title: {
+        text: 'Displacement FFT',
+    }
+});
+socket.on('sin_wave', function (msg) {
+    if (isUpdating) {
+        if (data_displacement.length > 400) {
+            data_displacement.shift();
+        }
+        data_displacement.push([msg.x, msg.y]);
+        // Update the chart
+        myChart8.setOption({
+            xAxis: {
+                data: data_displacement.map(item => item[0]) // Update x-axis categories to match the current data
+            },
+            series: [{
+                data: data_displacement
+            }]
+        });
+        // myChart8.setOption({
+        //     series: [{
+        //         data: data_displacement.slice()
+        //     }]
+        // });
+    }
+});
+socket.on('sin_wave_fft', function (msg) {
+    if (isUpdating) {
+        data_displacement_fft = msg.y.map(item => [item[0], item[1]]);
+        myChart9.setOption({
+            series: [{
+                data: data_displacement_fft.slice()
+            }]
+        });
+    }
+});
+
+document.getElementById('toggleUpdate').addEventListener('click', function () {
+    isUpdating = !isUpdating;
+    this.textContent = isUpdating ? 'Pause' : 'Resume';
+    if (isUpdating) {
+        socket.connect();  // Connect to the server if updating
+    } else {
+        socket.disconnect();  // Disconnect from the server if not updating
+    }
+});
+
+// Resize chart on container resize
+window.onresize = function () {
+    myChart8.resize();
+    myChart9.resize();
+};
+
+
+var socket = io.connect('http://localhost:5001'); // Ensure this matches the address your Flask app is running on
+
+socket.on('connect', function () {
+    console.log('Connected to the server.');
+});
+
+socket.on('frame', function (data) {
+    document.getElementById('live-camera').src = "data:image/jpeg;base64," + data.data;
+});
+
+
+
+
+

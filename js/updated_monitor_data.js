@@ -32,14 +32,34 @@ function handleKeyPress(e) {
 }
 
 function sendData(speed) {
+    // $.ajax({
+    //     url: "http://192.168.137.211/fanSpeed",
+    //     data: { fanSpeed: speed },
+    //     type: "GET",
+    //     success: function (json) {
+    //         let fanSpeed = mapTo100Percentage(speed);
+    //         showToast("Data received. Fan speed: " + fanSpeed, "success");
+    //         fan_control.fan_speed = fanSpeed;
+    //     },
+    //     error: function (xhr, status, error) {
+    //         console.error("AJAX error:", status, error);
+    //     }
+    // });
+    
+
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://192.168.137.158/fanSpeed?fanSpeed=" + speed, true);
-    xhr.onreadystatechange = function () {
+    xhr.open("GET", "http://192.168.0.163/fanSpeed?fanSpeed=" + speed, true);
+    xhr.onreadystatechange = function (json) {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            var json = JSON.parse(xhr.responseText);
-            let fanSpeed = mapTo100Percentage(json.fanSpeed);
+            // var json = JSON.parse(xhr.responseText);
+            // let fanSpeed = mapTo100Percentage(json.fanSpeed);
+            // showToast("Data received. Fan speed: " + fanSpeed, "success");
+            // fan_control.fan_speed = fanSpeed;
+            // console.log(fan_speed);
+            let fanSpeed = mapTo100Percentage(speed);
             showToast("Data received. Fan speed: " + fanSpeed, "success");
             fan_control.fan_speed = fanSpeed;
+            // xhr.abort();
         }
     };
     xhr.send();

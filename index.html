@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
   <link rel="icon" href="./img/logo.png" />
-  <!-- <link rel="stylesheet" href="./fonts/font.css" /> -->
 
   <link rel="stylesheet" href="./css/bootstrap.min.css" />
   <link rel="stylesheet" href="./css/main.css" />
@@ -27,13 +26,18 @@
     <div class="header">
       <div class="container">
         <div class="d-flex justify-content-center align-items-end" style="flex-wrap: wrap;">
+          <img class="flex-item" src="img/UF_Logo.jpg" style="flex: 0 1 auto; width: 10%; max-width: 100px;margin-right: 1%;" />
           <img class="flex-item" src="img/logo.png" style="flex: 0 1 auto; width: 10%; max-width: 100px;" />
-          <img class="flex-item" src="img/title.png"
-            style="flex: 0 1 auto; width: 35%; max-width: 350px; margin-left: 1%;" />
+          
+          
           <div class="flex-item" style="flex: 0 1 auto; color:#fff; text-align: center;">
+            <img class="flex-item" src="img/title.png"
+            style="flex: 0 1 auto; max-width: 350px; margin-left: 1%;" />
+            <br>
             <span id="time">{{ year }}-{{ month }}-{{ date }}&nbsp;&nbsp; {{ hour }}:{{ minute }}:{{ second
               }}&nbsp;&nbsp; {{ strDate }}</span>
           </div>
+          <img class="flex-item" src="img/NSF_Logo.jpg" style="width: 10%;" />
         </div>
       </div>
     </div>
@@ -75,45 +79,14 @@
               </div>
             </div>
           </div>
-          <div class="top10">
-            <div>
-              <div class="pfTitle" style="margin-bottom: 30px;">
-                <img style="width: 30px; height: 30px; margin-right: 10px;" src="img/data-icon.png" />
-                <span class="titleText">Extra Data</span>
-              </div>
-              <div style="margin: auto;width: 80%;height: 75%;">
 
-                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Success example"
-                  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-
-                  <div class="progress-bar bg-success overflow-visible text-dark" style="width: 25%">Data1: 25%</div>
-                </div>
-                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Info example"
-                  aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                  <div class="progress-bar bg-info text-dark overflow-visible text-dark" style="width: 50%">Data2:50%
-                  </div>
-                </div>
-                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Warning example"
-                  aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                  <div class="progress-bar bg-warning text-dark overflow-visible text-dark" style="width: 75%">Data3:75%
-                  </div>
-                </div>
-                <div style="margin-top: 10px;" class="progress" role="progressbar" aria-label="Danger example"
-                  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                  <div class="progress-bar bg-danger overflow-visible text-dark" style="width: 100%">Data4: 100%</div>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
         </div>
 
         <div class="middleBox col-lg-6 col-md-6 col-sm-12">
           <div class="baiduMap">
 
             <div id="container-live-camera">
-              <img id="live-camera" style="width: 100%; height: 100%;" src="http://127.0.0.1:5000/video_feed"></iframe>
+              <img id="live-camera" style="width: 100%; height: 100%;"></iframe>
 
             </div>
           </div>
@@ -160,13 +133,25 @@
         <div class="middleBox col-lg-12 col-md-12 col-sm-12">
           <div class="baiduMap">
 
-            <div id="container-live-data">
-              <div id="echartdisplaydata" style="width:100%;height: 50%;margin:auto;"></div>
-
+           
+            <div id="container-live-data" style="display: block;">
+              <div id="echartdisplaydata" style="width: 100%; height: 50%;"></div>
+              <div id="echartdisplayfftdata" style="width: 100%; height: 50%;"></div>
+              <div style="text-align: center;">
+                <button class="btn btn-danger" id="toggleUpdate" style="font-size: x-large;position: absolute;bottom: 0;left: 0;">Pause</button>
+              </div>
             </div>
+
+
+
+
+
+
+
           </div>
         </div>
       </div>
+
     </div>
   </div>
   </div>
@@ -181,7 +166,7 @@
   <script src="js/roma.js"></script>
   <script src="js/jquery.countUp.js"></script>
   <script src="js/main.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
   <script src="js/echart.js"></script>
   <script>
     var retryCount = 0;

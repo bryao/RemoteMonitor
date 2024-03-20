@@ -1,39 +1,45 @@
-from flask import Flask, Response, render_template_string
+# backend.py
+
+from flask import Flask
+from flask_socketio import SocketIO
+import eventlet
+import time
+import math
 import cv2
-from queue import Queue
-from threading import Thread
+import base64
+
+# eventlet.monkey_patch()
 
 app = Flask(__name__)
-frame_queue = Queue()
-camera = cv2.VideoCapture(0)
-camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-def camera_capture():
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+cap = cv2.VideoCapture(0)
+thread = None  # Initialize the thread variable
+
+def background_thread():
+    """Generate sin wave data and emit to all clients."""
+    count = 0
     while True:
-        success, frame = camera.read()
-        if not success:
+        socketio.sleep(0.016)  # Emit data at 1ms intervals
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: failed to capture image")
             break
-        if not frame_queue.full():
-            frame_queue.put(frame)
+        # Encode the frame in JPG format
+        _, buffer = cv2.imencode('.jpg', frame)
+        # Convert the image to a Base64 string
+        jpg_as_text = base64.b64encode(buffer).decode()
+        socketio.emit('frame', {'data': jpg_as_text})
 
-def encode_frames():
-    while True:
-        if not frame_queue.empty():
-            frame = frame_queue.get()
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+def start_background_thread():
+    """Start the background thread if it's not already running."""
+    global thread
+    if thread is None:
+        thread = socketio.start_background_task(background_thread)
 
-@app.route('/')
-def index():
-    return render_template_string('<img src="/video" />')
-
-@app.route('/video_feed')
-def video():
-    return Response(encode_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@socketio.on('connect')
+def test_connect():
+    print('Client connected')
+    start_background_thread()
 
 if __name__ == '__main__':
-    capture_thread = Thread(target=camera_capture)
-    capture_thread.start()
-    app.run(host='0.0.0.0', port=5000, threaded=True)
+    socketio.run(app, host='0.0.0.0',port=5001,debug=True)

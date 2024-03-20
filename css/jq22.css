@@ -11,7 +11,7 @@ ul li {
   list-style: none;
 }
 #FontScroll {
-  height: 134px;
+  height: 380px;
   line-height: 30px;
   overflow: Hidden;
   padding: 5px 0;
@@ -32,7 +32,7 @@ ul li {
   transition: all 1.5s ease 0s;
 }
 #FontScroll {
-  padding: 0 30px;
+  padding: 0 15px;
 }
 .navBox {
   position: absolute;

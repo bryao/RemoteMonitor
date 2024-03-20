@@ -126,12 +126,12 @@ body {
 }
 .main .content .leftBox .paimin {
   width: 100%;
-  height: 220px;
+  height: 455px;
   background: rgba(50, 72, 106, 0.2);
   margin-top: 18px;
 }
 .main .content .leftBox .paimin > div {
-  height: 220px;
+  height: 455px;
   border: 1px solid rgba(27, 146, 253, 0.5);
 }
 /* 安全隐患 */
