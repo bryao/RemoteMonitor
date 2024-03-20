@@ -126,8 +126,11 @@ option5 = {
 }
 // 使用刚指定的配置项和数据显示图表。
 myChart5.setOption(option5)
-
+var isUpdating5 = true;
 function updateChart5() {
+    if (!isUpdating5) {
+        return;
+    }
     $.get("http://127.0.0.1:5003", function (data) {
         var velocityValue = data.Velocity;
         myChart5.setOption({
@@ -163,6 +166,9 @@ function updateChart5() {
                 }]
             }]
         });
+    }).fail(function () {
+        console.error('Failed to fetch data');
+        isUpdating5 = false; // Stop updating on error
     });
 }
 
@@ -310,7 +316,7 @@ setInterval(updateChart7, 500);
 var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));
 var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));
 
-var socket = io('127.0.0.1:5002');
+var socket = io('127.0.0.1:5002',{reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000}); 
 var data_displacement = [];
 var data_displacement_fft = [];
 
@@ -474,7 +480,7 @@ window.onresize = function () {
 };
 
 
-var socket = io.connect('http://localhost:5001'); // Ensure this matches the address your Flask app is running on
+var socket = io.connect('http://localhost:5001',{reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000}); // Ensure this matches the address your Flask app is running on
 
 socket.on('connect', function () {
     console.log('Connected to the server.');
