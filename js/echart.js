@@ -242,7 +242,52 @@ option6 = {
 
 // 使用刚指定的配置项和数据显示图表。
 myChart6.setOption(option6)
+var isUpdating6 = true;
+function updateChart6() {
+    if (!isUpdating6) {
+        return;
+    }
 
+    var fan_speed = fan_control.fan_speed
+    var fan_speed_loop_up_table = [
+        0,0,0,0,0.28,0.55,0.95,1.4,1.75,2.21,2.83,3.34,3.85,4.33,4.66,4.8,4.96,5.05,5.1,5.18,5.18
+    ]
+    fan_speed = fan_speed_loop_up_table[Math.round( fan_speed/5 )]
+    myChart6.setOption({
+        title: {
+            text: fan_speed.toString()
+        },
+        series: [{
+            data: [{
+                value: parseFloat(fan_speed),
+                name: '01',
+                itemStyle: {
+                    normal: {
+                        color: { // 完成的圆环的颜色
+                            colorStops: [{
+                                offset: 0,
+                                color: '#00cefc' // 0% 处的颜色
+                            }, {
+                                offset: 1,
+                                color: '#367bec' // 100% 处的颜色
+                            }]
+                        },
+                        label: {
+                            show: false
+                        },
+                        labelLine: {
+                            show: false
+                        }
+                    }
+                }
+            }, {
+                name: '02',
+                value: 100 - parseFloat(fan_speed)
+            }]
+        }]
+    });
+}
+setInterval(updateChart6, 500);
 //fan speed
 var myChart7 = echarts.init(document.getElementById('echartAqpf'))
 let fan_speed = 0
@@ -316,7 +361,7 @@ setInterval(updateChart7, 500);
 var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));
 var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));
 
-var socket = io('127.0.0.1:5002',{reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000}); 
+var socket = io('127.0.0.1:5002', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
 var data_displacement = [];
 var data_displacement_fft = [];
 
@@ -480,7 +525,7 @@ window.onresize = function () {
 };
 
 
-var socket = io.connect('http://localhost:5001',{reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000}); // Ensure this matches the address your Flask app is running on
+var socket = io.connect('http://localhost:5001', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
 
 socket.on('connect', function () {
     console.log('Connected to the server.');

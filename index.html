@@ -26,13 +26,14 @@
     <div class="header">
       <div class="container">
         <div class="d-flex justify-content-center align-items-end" style="flex-wrap: wrap;">
-          <img class="flex-item" src="img/logo.png" style="flex: 0 1 auto; width: 7%; max-width: 100px;margin-right: 1%;margin-bottom: 0.38%;" />
-          <img class="flex-item" src="img/UF_Logo.jpg" style="flex: 0 1 auto; width: 6.5%; max-width: 100px;margin-bottom: 0.38%" />
-          
-          
+          <img class="flex-item" src="img/logo.png"
+            style="flex: 0 1 auto; width: 7%; max-width: 100px;margin-right: 1%;margin-bottom: 0.38%;" />
+          <img class="flex-item" src="img/UF_Logo.jpg"
+            style="flex: 0 1 auto; width: 6.5%; max-width: 100px;margin-bottom: 0.38%" />
+
+
           <div class="flex-item" style="flex: 0 1 auto; color:#fff; text-align: center;">
-            <img class="flex-item" src="img/title.png"
-            style="flex: 0 1 auto; max-width: 350px; margin-left: 1%;" />
+            <img class="flex-item" src="img/title.png" style="flex: 0 1 auto; max-width: 350px; margin-left: 1%;" />
             <br>
             <span id="time">{{ year }}-{{ month }}-{{ date }}&nbsp;&nbsp; {{ hour }}:{{ minute }}:{{ second
               }}&nbsp;&nbsp; {{ strDate }}</span>
@@ -70,12 +71,24 @@
           </div>
           <div class="paimin">
             <div>
-              <div class="pfTitle" style="margin-bottom: 30px;">
+              <div class="pfTitle" style="margin-bottom: 5%;">
                 <img style="width: 30px; height: 30px; margin-right: 10px;" src="img/model-icon.png" />
-                <span class="titleText">Current Model</span>
+                <div class="titleText">Current Model</div>
+                
+              </div>
+              <div class="dropdown" style="margin-left: 5%;margin-bottom: 7%;">
+                <a class="btn model-dropdown-menu-color dropdown-toggle" id="modelName" style="width: 95%;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Select Model
+                </a>
+              
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" onclick="changeImage('Square')">Square</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="changeImage('Round Corner')">Round Corner</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="changeImage('Corner Cut')">Corner Cut</a></li>
+                </ul>
               </div>
               <div id="FontScroll">
-                <img style="width: 100%; height: 100%;" src="img/model.png" />
+                <img id="modelImage" style="width: 100%; height: 100%;" src="img/model.png" />
               </div>
             </div>
           </div>
@@ -133,12 +146,13 @@
         <div class="middleBox col-lg-12 col-md-12 col-sm-12">
           <div class="baiduMap">
 
-           
+
             <div id="container-live-data" style="display: block;">
               <div id="echartdisplaydata" style="width: 100%; height: 50%;"></div>
               <div id="echartdisplayfftdata" style="width: 100%; height: 50%;"></div>
               <div style="text-align: center;">
-                <button class="btn btn-danger" id="toggleUpdate" style="font-size: x-large;position: absolute;bottom: 0;left: 0;">Pause</button>
+                <button class="btn btn-danger" id="toggleUpdate"
+                  style="font-size: x-large;position: absolute;bottom: 0;left: 0;">Pause</button>
               </div>
             </div>
 

@@ -109,3 +109,19 @@ var appIndex = new Vue({
     // console.log(this.datalist)
   }
 })
+function changeImage(model) {
+  var imagePath = 'img/';
+  switch(model) {
+      case 'Square':
+          imagePath += 'Square.png'; // Path to your square image
+          break;
+      case 'Round Corner':
+          imagePath += 'RoundCorner.png'; // Path to your round corner image
+          break;
+      case 'Corner Cut':
+          imagePath += 'CornerCut.png'; // Path to your corner cut image
+          break;
+  }
+  document.getElementById('modelImage').src = imagePath;
+  document.getElementById('modelName').textContent = model;
+}

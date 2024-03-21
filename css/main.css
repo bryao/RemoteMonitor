@@ -113,7 +113,9 @@ body {
   color: rgba(55, 180, 228, 1);
 }
 .main .content .pfTitle {
-  margin: 17px;
+  margin-top: 17px;
+  margin-left: 17px;
+  margin-right: 17px;
   /* display: flex; */
   align-items: center;
 }
@@ -126,12 +128,12 @@ body {
 }
 .main .content .leftBox .paimin {
   width: 100%;
-  height: 455px;
+  height: 500px;
   background: rgba(50, 72, 106, 0.2);
   margin-top: 18px;
 }
 .main .content .leftBox .paimin > div {
-  height: 455px;
+  height: 500px;
   border: 1px solid rgba(27, 146, 253, 0.5);
 }
 /* 安全隐患 */
@@ -344,3 +346,15 @@ body {
   color: #1B92FD;
 }
 
+.model-dropdown-menu-color {
+  background-color: white; /* Green background */
+  border-color: white; /* Green border */
+}
+.model-dropdown-menu-color:hover {
+  background-color: white; /* Darker green on hover */
+}
+.model-dropdown-menu-color:active,
+.model-dropdown-menu-color:focus {
+    background-color: white; /* Even darker green when active or focused */
+    border-color: white;
+}
