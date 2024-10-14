@@ -10,7 +10,7 @@ li {
 ul li {
   list-style: none;
 }
-#FontScroll {
+#modelImageContainer {
   height: 380px;
   line-height: 30px;
   overflow: Hidden;
@@ -19,19 +19,19 @@ ul li {
   /* background-color: #2a2a2a; */
   margin-top: -12px;
 }
-#FontScroll a {
+#modelImageContainer a {
   color: #f0f8ff;
   text-decoration: none;
 }
-#FontScroll .line {
+#modelImageContainer .line {
   text-align: left;
   width: 100%;
 }
-#FontScroll .fontColor a {
+#modelImageContainer .fontColor a {
   /* color: red; */
   transition: all 1.5s ease 0s;
 }
-#FontScroll {
+#modelImageContainer {
   padding: 0 15px;
 }
 .navBox {

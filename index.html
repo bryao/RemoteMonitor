@@ -2,17 +2,26 @@
 <html lang="en">
 
 <head>
+  <!-- Meta tags for character encoding, browser compatibility, and responsive design -->
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
+  <!-- Link to favicon for the webpage -->
   <link rel="icon" href="./img/logo.png" />
 
+  <!-- Stylesheets for Bootstrap and custom styles -->
   <link rel="stylesheet" href="./css/bootstrap.min.css" />
   <link rel="stylesheet" href="./css/main.css" />
   <link rel="stylesheet" href="./css/jq22.css" />
-  <script src="js/updated_monitor_data.js"></script>
+
+  <!-- Script to monitor updated data -->
+  <script src="js/fan-speed-controller.js"></script>
+
+  <!-- Page title -->
   <title>Remote Monitor</title>
+
+  <!-- Inline style for adjusting map scale text color -->
   <style>
     .BMap_scaleTxt {
       color: #fff !important;
@@ -21,186 +30,188 @@
 </head>
 
 <body>
+  <!-- Bootstrap JavaScript bundle -->
   <script src="js/bootstrap.bundle.min.js"></script>
-  <div class="main" id="appIndex">
+
+  <!-- Main container for the entire page -->
+  <div class="main-container" id="appContainer">
+    <!-- Header section -->
     <div class="header">
       <div class="container">
+        <!-- Flex container for logo and title display -->
         <div class="d-flex justify-content-center align-items-end" style="flex-wrap: wrap;">
+          <!-- University and organization logos -->
           <img class="flex-item" src="img/logo.png"
             style="flex: 0 1 auto; width: 7%; max-width: 100px;margin-right: 1%;margin-bottom: 0.38%;" />
           <img class="flex-item" src="img/UF_Logo.jpg"
             style="flex: 0 1 auto; width: 6.5%; max-width: 100px;margin-bottom: 0.38%" />
 
-
+          <!-- Title and current date-time display -->
           <div class="flex-item" style="flex: 0 1 auto; color:#fff; text-align: center;">
             <img class="flex-item" src="img/title.png" style="flex: 0 1 auto; max-width: 350px; margin-left: 1%;" />
             <br>
             <span id="time">{{ year }}-{{ month }}-{{ date }}&nbsp;&nbsp; {{ hour }}:{{ minute }}:{{ second
               }}&nbsp;&nbsp; {{ strDate }}</span>
           </div>
+          <!-- NSF logo -->
           <img class="flex-item" src="img/NSF_Logo.jpg" style="flex: 0 1 auto; width: 7.5%; max-width: 100px;" />
         </div>
       </div>
     </div>
 
-
+    <!-- Main content container -->
     <div class="container">
       <div class="content row">
 
-        <div class="leftBox col-lg-3 col-md-3 col-sm-12">
-          <div class="pingfen">
+        <!-- Control panel on the left side -->
+        <div class="control-panel col-lg-3 col-md-3 col-sm-12">
+          <!-- Fan control section -->
+          <div class="fan-control-section">
             <div>
-              <div class="pfTitle">
+              <div class="section-title">
                 <img style="width: 30px; height: 30px;" src="img/fan_logo.png" />
                 <span class="titleText">Fan Control</span>
               </div>
-              <div class="pfcontent" style="display: flex; align-items: center;">
-                <div style="height: 100%; display: flex; align-items: center;" class="leftBox">
+              <div class="fan-control-content" style="display: flex; align-items: center;">
+                <!-- Fan speed input -->
+                <div style="height: 100%; display: flex; align-items: center;" class="control-panel">
                   <input id="fanSpeed" type="number" class="form-control" min="0" max="100"
                     onkeypress="handleKeyPress(event)">
-
                 </div>
-                <div style="padding-left: 20px;" class="leftBox">
-                  <div id="echartAqpf" style="width:105px;height:85px;">
-
-                  </div>
+                <!-- Fan speed visualization -->
+                <div style="padding-left: 20px;" class="control-panel">
+                  <div id="fanSpeedChart" style="width:105px;height:85px;"></div>
                   <span>Fan Speed</span>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Current model selection section -->
           <div class="paimin">
             <div>
-              <div class="pfTitle" style="margin-bottom: 5%;">
+              <div class="section-title" style="margin-bottom: 5%;">
                 <img style="width: 30px; height: 30px; margin-right: 10px;" src="img/model-icon.png" />
                 <div class="titleText">Current Model</div>
-                
               </div>
-              <div class="dropdown" style="margin-left: 5%;margin-bottom: 7%;">
-                <a class="btn model-dropdown-menu-color dropdown-toggle" id="modelName" style="width: 95%;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <!-- Dropdown to select model type -->
+              <div class="dropdown" style="margin-left: 5%;margin-bottom: 2%;">
+                <a class="btn model-dropdown-menu-color dropdown-toggle" id="selectedModelName" style="width: 95%;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Select Model
                 </a>
-              
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#" onclick="changeImage('Square')">Square</a></li>
                   <li><a class="dropdown-item" href="#" onclick="changeImage('Round Corner')">Round Corner</a></li>
                   <li><a class="dropdown-item" href="#" onclick="changeImage('Corner Cut')">Corner Cut</a></li>
                 </ul>
               </div>
-              <div id="FontScroll">
-                <img id="modelImage" style="width: 100%; height: 100%;" src="img/model.png" />
+              <!-- Display for the selected model image -->
+              <div id="modelImageContainer" style="text-align: center; height: 100%;">
+                <img id="currentModelImage" style="width: 60%; height: 70%; margin-top: 10%;" src="img/model.png" />
               </div>
             </div>
           </div>
-
         </div>
 
+        <!-- Middle box displaying live camera feed -->
         <div class="middleBox col-lg-6 col-md-6 col-sm-12">
           <div class="baiduMap">
-
-            <div id="container-live-camera">
-              <img id="live-camera" style="width: 100%; height: 100%;"></iframe>
-
+            <div id="liveCameraContainer">
+              <img id="liveCamera" style="width: 100%; height: 100%;"></iframe>
             </div>
           </div>
         </div>
 
+        <!-- Right box for wind and frequency data -->
         <div class="rightBox col-lg-3 col-md-3 col-sm-12">
-
-          <div class="weihutj">
+          <!-- Estimated wind speed section -->
+          <div class="wind-section">
             <div>
-              <div class="pfTitle iconAndText ">
+              <div class="section-title iconAndText ">
                 <img style="width: 15%; " src="img/estimated-wind-icon.png" />
-                <span class="textOnly">Estimated Wind Speed</span>
+                <span class="textOnly">Estimated Wind Speed (m/s)</span>
               </div>
-              <div id="echartestwin" style="width:25%;height: 50%;margin:auto;"></div>
-
+              <div id="estimatedWindSpeedChart" style="width:25%;height: 50%;margin:auto;"></div>
             </div>
           </div>
 
-          <div class="weihutj">
+          <!-- Measured wind speed section -->
+          <div class="wind-section">
             <div>
-              <div class="pfTitle iconAndText ">
+              <div class="section-title iconAndText ">
                 <img style="width: 15%;" src="img/estimated-wind-icon.png" />
-                <span class="textOnly">Measured Wind Speed</span>
+                <span class="textOnly">Measured Wind Speed (m/s)</span>
               </div>
-              <div id="echartactwin" style="width:25%;height: 50%;margin:auto;"></div>
-
+              <div id="measuredWindSpeedChart" style="width:25%;height: 50%;margin:auto;"></div>
             </div>
           </div>
 
-          <div class="guzhangtj">
+          <!-- Vortex shedding frequency section -->
+          <div class="vortex-frequency-section">
             <div>
-              <div class="pfTitle iconAndText ">
+              <div class="section-title iconAndText ">
                 <img style="width: 15%;" src="img/frequency-icon.png" />
-                <span class="textOnly">Vortex Shedding Frequency
+                <span class="textOnly">Vortex Shedding Frequency (Hz)</span>
               </div>
-              <div id="echartshedding" style="width:25%;height: 50%;margin:auto;"></div>
+              <div id="vortexFrequencyChart" style="width:25%;height: 50%;margin:auto;"></div>
             </div>
-
-
           </div>
         </div>
       </div>
+
+      <!-- Middle box containing live data charts -->
       <div class="content row">
         <div class="middleBox col-lg-12 col-md-12 col-sm-12">
           <div class="baiduMap">
-
-
-            <div id="container-live-data" style="display: block;">
-              <div id="echartdisplaydata" style="width: 100%; height: 50%;"></div>
-              <div id="echartdisplayfftdata" style="width: 100%; height: 50%;"></div>
+            <div id="liveDataContainer" style="display: block;">
+              <!-- Data charts for live monitoring -->
+              <div id="dataChart" style="width: 100%; height: 50%;"></div>
+              <div id="fftDataChart" style="width: 100%; height: 50%;"></div>
+              <!-- Button to pause/resume data updates -->
               <div style="text-align: center;">
-                <button class="btn btn-danger" id="toggleUpdate"
+                <button class="btn btn-danger" id="toggleUpdateButton"
                   style="font-size: x-large;position: absolute;bottom: 0;left: 0;">Pause</button>
               </div>
             </div>
-
-
-
-
-
-
-
           </div>
         </div>
       </div>
-
     </div>
   </div>
-  </div>
+
+  <!-- Toast notification for alerts -->
   <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
     <div id="toastBody" class="toast-body">
     </div>
   </div>
+
+  <!-- JavaScript libraries and custom scripts -->
   <script src="js/jquery.min.js"></script>
   <script src="js/vue.min.js"></script>
   <script src="js/echarts.min.js"></script>
-  <script src="js/walden.js"></script>
-  <script src="js/roma.js"></script>
-  <script src="js/jquery.countUp.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/vue-app-main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-  <script src="js/echart.js"></script>
+  <script src="js/wind-and-displacement-charts.js"></script>
+
+  <!-- Script to handle image reconnect attempts -->
   <script>
     var retryCount = 0;
-    var maxRetries = 5;
+    var maxRetryAttempts = 5;
 
-    document.getElementById('live-camera').onerror = function () {
-      if (retryCount < maxRetries) {
+    document.getElementById('liveCamera').onerror = function () {
+      if (retryCount < maxRetryAttempts) {
         console.log('Stream lost. Attempting to reconnect... Attempt number: ' + (retryCount + 1));
         showToast('Stream lost. Attempting to reconnect... Attempt number: ' + (retryCount + 1), 'failed');
         setTimeout(() => {
           this.src = this.src;
           retryCount++;
-        }, 2000); // 1000 milliseconds = 1 second
+        }, 2000); // Retry after 2 seconds
       } else {
         console.log('Max retry attempts reached. Stopping reconnect attempts.');
         showToast('Max retry attempts reached. Stopping reconnect attempts.', 'failed');
       }
     };
   </script>
-
 
 </body>
 

@@ -1,0 +1,1 @@
+conda activate wind-tunnel && python data_simulation.py
