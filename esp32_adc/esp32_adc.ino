@@ -14,8 +14,8 @@
 #include <Adafruit_ADS1X15.h>
 
 // WiFi credentials
-const char* ssid = "MICLab";  // Wi-Fi SSID (network name)
-const char* password = "miclabedu2021";  // Wi-Fi password
+const char* ssid = "";  // Wi-Fi SSID (network name)
+const char* password = "";  // Wi-Fi password
 
 // I2C and ADC configuration
 constexpr int READY_PIN = 2;  // Pin number for data ready signal from ADS1115

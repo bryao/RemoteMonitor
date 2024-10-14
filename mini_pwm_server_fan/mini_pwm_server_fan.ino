@@ -23,8 +23,8 @@
 #include <WiFiNINA.h>  // Include library to handle Wi-Fi functions
 
 // Wi-Fi credentials
-const char* ssid = "MICLab";              // Wi-Fi network name (SSID)
-const char* password = "miclabedu2021";   // Wi-Fi password
+const char* ssid = "";              // Wi-Fi network name (SSID)
+const char* password = "";   // Wi-Fi password
 IPAddress ip(192,168,0,163);              // Static IP address for the device
 
 // Server setup
