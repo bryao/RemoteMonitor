@@ -93,16 +93,16 @@ async def Testo405i(address):
         # Connect to the Bluetooth device using Bleak
         async with BleakClient(address) as client:
             # Read and print model number
-            model_number = await client.read_gatt_char(MODEL_NBR_UUID)
+            model_number = await client.read_gatt_char(model_number_uuid)
             print("Model Number: {0}".format("".join(map(chr, model_number))))
 
             # Start notification on a characteristic and write commands to initiate measurements
-            await client.start_notify(uuid_chr4, callback)
-            await client.write_gatt_char(uuid_chr1, b"\x56\x00\x03\x00\x00\x00\x0c\x69\x02\x3e\x81", response=True)
-            await client.write_gatt_char(uuid_chr1, b"\x20\x01\x00\x00\x00\x00\x3a\xbb", response=True)
-            await client.write_gatt_char(uuid_chr1, b"\x04\x02\x15\x00\x00\x00\x7c\x53\x0f\x00\x00\x00\x46\x69\x72\x6d\x77\x61\x72\x65", response=True)
-            await client.write_gatt_char(uuid_chr1, b"\x56\x65\x72\x73\x69\x6f\x6e\x30\x4f", response=True)  # Request firmware version
-            await client.write_gatt_char(uuid_chr1, b"\x11\x03\x00\x00\x00\x00\x47\x5a", response=True)  # Start continuous measurement
+            await client.start_notify(characteristic_uuid_notify, notification_callback)
+            await client.write_gatt_char(characteristic_uuid_write, b"\x56\x00\x03\x00\x00\x00\x0c\x69\x02\x3e\x81", response=True)
+            await client.write_gatt_char(characteristic_uuid_write, b"\x20\x01\x00\x00\x00\x00\x3a\xbb", response=True)
+            await client.write_gatt_char(characteristic_uuid_write, b"\x04\x02\x15\x00\x00\x00\x7c\x53\x0f\x00\x00\x00\x46\x69\x72\x6d\x77\x61\x72\x65", response=True)
+            await client.write_gatt_char(characteristic_uuid_write, b"\x56\x65\x72\x73\x69\x6f\x6e\x30\x4f", response=True)  # Request firmware version
+            await client.write_gatt_char(characteristic_uuid_write, b"\x11\x03\x00\x00\x00\x00\x47\x5a", response=True)  # Start continuous measurement
             
             # Keep the connection alive and read data periodically
             while True:        
@@ -123,5 +123,5 @@ def run_flask():
 if __name__ == "__main__":
     flask_thread = threading.Thread(target=run_flask)  # Create a thread for Flask
     flask_thread.start()  # Start the Flask thread
-    asyncio.run(Testo405i(address))  # Start the Bluetooth connection and data collection
+    asyncio.run(Testo405i(bluetooth_address))  # Start the Bluetooth connection and data collection
     flask_thread.join()  # Wait for the Flask thread to finish
