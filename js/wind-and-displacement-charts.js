@@ -1,6 +1,7 @@
 // Shedding Frequency Chart
 var vortexFrequencyChart = echarts.init(document.getElementById('vortexFrequencyChart'));
 
+
 var vortexFrequencyOption = {
     title: {
         text: 'N/A',
@@ -51,9 +52,11 @@ var vortexFrequencyOption = {
 };
 vortexFrequencyChart.setOption(vortexFrequencyOption);
 
+
 // Measured Wind Speed Chart
 var measuredWindSpeedChart = echarts.init(document.getElementById('measuredWindSpeedChart'));
 let measuredWindSpeed = 0;
+
 
 var measuredWindSpeedOption = {
     title: {
@@ -105,6 +108,7 @@ var measuredWindSpeedOption = {
 };
 measuredWindSpeedChart.setOption(measuredWindSpeedOption);
 
+
 var isUpdatingMeasuredWindSpeed = true;
 function updateMeasuredWindSpeedChart() {
     if (!isUpdatingMeasuredWindSpeed) {
@@ -146,8 +150,10 @@ function updateMeasuredWindSpeedChart() {
 }
 setInterval(updateMeasuredWindSpeedChart, 50);
 
+
 // Estimated Wind Speed Chart
 var estimatedWindSpeedChart = echarts.init(document.getElementById('estimatedWindSpeedChart'));
+
 
 var estimatedWindSpeedOption = {
     title: {
@@ -199,11 +205,13 @@ var estimatedWindSpeedOption = {
 };
 estimatedWindSpeedChart.setOption(estimatedWindSpeedOption);
 
+
 var isUpdatingEstimatedWindSpeed = true;
 function updateEstimatedWindSpeedChart() {
     if (!isUpdatingEstimatedWindSpeed) {
         return;
     }
+
 
     var fanSpeed = fan_control.fan_speed;
     var fanSpeedLookupTable = [
@@ -239,6 +247,7 @@ function updateEstimatedWindSpeedChart() {
     });
 }
 setInterval(updateEstimatedWindSpeedChart, 500);
+
 
 // Fan Speed Chart
 var fanSpeedChart = echarts.init(document.getElementById('fanSpeedChart'));
@@ -297,6 +306,7 @@ function updateFanSpeedChart() {
 }
 setInterval(updateFanSpeedChart, 500);
 
+
 // Data Displacement Chart
 var rawDisplacementChart = echarts.init(document.getElementById('dataChart'));
 var fftDisplacementChart = echarts.init(document.getElementById('fftDataChart'));
@@ -304,7 +314,9 @@ var displacementSocket = io('http://127.0.0.1:5002', { reconnectionAttempts: 5, 
 var dataDisplacement = [];
 var dataDisplacementFFT = [];
 
+
 var isUpdatingDataDisplacement = true;
+
 
 var displacementChartOption = {
     backgroundColor: '#f5f5f5',
@@ -405,6 +417,7 @@ var displacementChartOption = {
     roam: false
 };
 
+
 rawDisplacementChart.setOption(displacementChartOption);
 fftDisplacementChart.setOption(displacementChartOption);
 fftDisplacementChart.setOption({
@@ -413,12 +426,13 @@ fftDisplacementChart.setOption({
     }
 });
 
+
 displacementSocket.on('displacement_data', function (msg) {
     if (isUpdatingDataDisplacement) {
         if (dataDisplacement.length > 400) {
             dataDisplacement.shift();
         }
-        dataDisplacement.push([msg.x, msg.y]);
+        dataDisplacement.push([msg.time, msg.value]);
         rawDisplacementChart.setOption({
             xAxis: {
                 data: dataDisplacement.map(item => item[0])
@@ -430,16 +444,41 @@ displacementSocket.on('displacement_data', function (msg) {
     }
 });
 
+
 displacementSocket.on('displacement_fft_data', function (msg) {
     if (isUpdatingDataDisplacement) {
-        dataDisplacementFFT = msg.y.map(item => [item[0], item[1]]);
+        for (let i = 0; i < msg.frequency.length; i++) {
+            if (msg.magnitude[i] > 50000){
+                continue
+            }
+            
+            dataDisplacementFFT.push([msg.frequency[i], msg.magnitude[i]]);
+        }
+
+
+        let magnitudeValue = dataDisplacementFFT.map(pair=>pair[1]);
+        let newMin_fft = Math.min(...magnitudeValue);
+        let newMax_fft = Math.max(...magnitudeValue);
+        // Update the chart
+
+
         fftDisplacementChart.setOption({
+            xAxis: {
+                data: dataDisplacementFFT.map(item => item[0]) 
+            },
             series: [{
-                data: dataDisplacementFFT.slice()
-            }]
+                data: dataDisplacementFFT
+            }],
+            yAxis: {
+                min:newMin_fft,
+                max:newMax_fft
+            }
         });
     }
+
+
 });
+
 
 // Toggle update button
 var toggleUpdateButton = document.getElementById('toggleUpdateButton');
@@ -453,11 +492,13 @@ toggleUpdateButton.addEventListener('click', function () {
     }
 });
 
+
 // Resize charts on window resize
 window.onresize = function () {
     rawDisplacementChart.resize();
     fftDisplacementChart.resize();
 };
+
 
 // Live Camera Feed
 var liveCameraSocket = io.connect('http://localhost:5001', {
@@ -467,9 +508,11 @@ var liveCameraSocket = io.connect('http://localhost:5001', {
     timeout: 20000
 });
 
+
 liveCameraSocket.on('connect', function () {
     console.log('Connected to the server.');
 });
+
 
 liveCameraSocket.on('video_frame', function (data) {
     document.getElementById('liveCamera').src = "data:image/jpeg;base64," + data.data;
