@@ -14,8 +14,8 @@
 #include <Adafruit_ADS1X15.h>
 
 // WiFi credentials
-const char* ssid = "";  // Wi-Fi SSID (network name)
-const char* password = "";  // Wi-Fi password
+const char* ssid = "MICLab";  // Wi-Fi SSID (network name)
+const char* password = "miclabedu2021";  // Wi-Fi password
 
 // I2C and ADC configuration
 constexpr int READY_PIN = 2;  // Pin number for data ready signal from ADS1115
@@ -27,9 +27,8 @@ Adafruit_ADS1X15 ads;  // Create an instance of the ADS1115 ADC
 WiFiServer server(8888);  // Set up a TCP server on port 8888
 
 // ADC data variables
-int16_t adc0;  // Variable to hold raw ADC value from channel 0
-float volts0;  // Variable to hold converted voltage from ADC value
 float displacement_filteredValue = 0.0;  // Filtered value for displacement
+double displacement_adc0;
 byte displacement_data_buffer[4];  // Buffer to hold displacement data
 
 // Interrupt handling
@@ -87,6 +86,8 @@ void setupWiFi() {
     Serial.print(".");  // Print dot while waiting for Wi-Fi connection
   }
   Serial.println("\nWiFi connected.");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 // TCP server setup
@@ -109,7 +110,7 @@ void handleClientConnections() {
       // Read the ADC value from channel 0
       displacement_adc0 = ads.getLastConversionResults();
       displacement_filteredValue = displacement_adc0;
-
+      Serial.println(displacement_filteredValue);
       // Prepare the data buffer for sending
       uint32_t temp;
       memcpy(&temp, &displacement_filteredValue, sizeof(float));
