@@ -89,7 +89,7 @@ def handle_client_connect():
 def handle_client_disconnect():
     """Handle client disconnection."""
     print('Client disconnected')  # Log client disconnection
-    stop_thread_event.set()  # Signal the event to stop the background thread
+    # stop_thread_event.set()  # Signal the event to stop the background thread
 
 if __name__ == '__main__':
     # Run the Flask server with SocketIO
