@@ -471,6 +471,6 @@ liveCameraSocket.on('connect', function () {
     console.log('Connected to the server.');
 });
 
-liveCameraSocket.on('frame', function (data) {
+liveCameraSocket.on('video_frame', function (data) {
     document.getElementById('liveCamera').src = "data:image/jpeg;base64," + data.data;
 });
