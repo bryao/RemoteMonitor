@@ -69,7 +69,7 @@ def process_and_emit_data(emission_count, timestamp, displacement_data, sampling
 
         # Emit FFT data to clients
         fft_data_pairs = list(zip(fft_frequency, fft_magnitude))  # Create a list of frequency and magnitude pairs
-        socketio.emit('  ', {'x': emission_count, 'y': fft_data_pairs})  # Emit the FFT data
+        socketio.emit('displacement_fft_data', {'x': emission_count, 'y': fft_data_pairs})  # Emit the FFT data
         displacement_data.clear()  # Clear the list to start collecting new data
 
 def start_data_background_thread():
