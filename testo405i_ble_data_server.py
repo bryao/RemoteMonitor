@@ -56,8 +56,8 @@ def buffer_read():
     while len(buffer) >= 32:
         if buffer[0:2] == b'\x10\x80':  # Check for frame start bytes
             frame_length = buffer[2] + 8  # Frame length from buffer data
-            frame = buffer[:frame_len]  # Extract frame from buffer
-            buffer[:frame_len] = b''  # Remove the processed frame from buffer
+            frame = buffer[:frame_length]  # Extract frame from buffer
+            buffer[:frame_length] = b''  # Remove the processed frame from buffer
             parse_frame(frame)  # Parse the frame data
         else:
             buffer[:1] = b''  # Remove the first byte if it doesn't match expected frame start
@@ -67,7 +67,7 @@ def buffer_read():
 def parse_frame(frame):
     global data
     parameter_length = frame[8]  # Get the length of the parameter name
-    parameter = frame[12:12+parameter_len].decode(encoding='utf-8')  # Decode parameter name
+    parameter = frame[12:12+parameter_length].decode(encoding='utf-8')  # Decode parameter name
 
     # If the parameter is 'Velocity', reset Timestamp and set initial Velocity value
     if parameter == 'Velocity':
@@ -75,7 +75,7 @@ def parse_frame(frame):
         data['Velocity'] = False  # Indicate that a Velocity value is expected
 
     # Extract the value from the frame data and format it
-    value = struct.unpack('<f', frame[12+parameter_len:12+parameter_len+4])[0]
+    value = struct.unpack('<f', frame[12+parameter_length:12+parameter_length+4])[0]
     data[parameter] = '{:.2f}'.format(value)  # Format the value with two decimal places
 
     # Print the data once the velocity parameter has been received
