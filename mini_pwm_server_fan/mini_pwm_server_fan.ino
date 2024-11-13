@@ -23,9 +23,9 @@
 #include <WiFiNINA.h>  // Include library to handle Wi-Fi functions
 
 // Wi-Fi credentials
-const char* ssid = "";              // Wi-Fi network name (SSID)
-const char* password = "";   // Wi-Fi password
-IPAddress ip(192,168,0,163);              // Static IP address for the device
+const char* ssid = "MICLab";              // Wi-Fi network name (SSID)
+const char* password = "miclabedu2021";   // Wi-Fi password
+// IPAddress ip(192,168,0,163);              // Static IP address for the device
 
 // Server setup
 WiFiServer server(80);                    // HTTP server listening on port 80
@@ -57,7 +57,7 @@ void setup() {
   debugPrint("Connecting to WiFi...");
 
   // Assign a static IP address to the device and start Wi-Fi connection
-  WiFi.config(ip);
+  // WiFi.config(ip);
   WiFi.begin(ssid, password);
 
   // Wait until connected to the Wi-Fi network
