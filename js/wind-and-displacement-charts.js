@@ -433,20 +433,24 @@ displacementSocket.on('displacement_data', function (msg) {
             dataDisplacement.shift();
         }
         dataDisplacement.push([msg.time, msg.value]);
-        rawDisplacementChart.setOption({
-            xAxis: {
-                data: dataDisplacement.map(item => item[0])
-            },
-            series: [{
-                data: dataDisplacement
-            }]
-        });
+        requestAnimationFrame(() =>{
+            rawDisplacementChart.setOption({
+                xAxis: {
+                    data: dataDisplacement.map(item => item[0])
+                },
+                series: [{
+                    data: dataDisplacement
+                }]
+            });
+
+        })
     }
 });
 
 
 displacementSocket.on('displacement_fft_data', function (msg) {
     if (isUpdatingDataDisplacement) {
+        dataDisplacementFFT = [];
         for (let i = 0; i < msg.frequency.length; i++) {
             if (msg.magnitude[i] > 50000){
                 continue
@@ -461,19 +465,21 @@ displacementSocket.on('displacement_fft_data', function (msg) {
         let newMax_fft = Math.max(...magnitudeValue);
         // Update the chart
 
-
-        fftDisplacementChart.setOption({
-            xAxis: {
-                data: dataDisplacementFFT.map(item => item[0]) 
-            },
-            series: [{
-                data: dataDisplacementFFT
-            }],
-            yAxis: {
-                min:newMin_fft,
-                max:newMax_fft
-            }
-        });
+        requestAnimationFrame(() =>{
+            fftDisplacementChart.setOption({
+                xAxis: {
+                    data: dataDisplacementFFT.map(item => item[0]) 
+                },
+                series: [{
+                    data: dataDisplacementFFT
+                }],
+                yAxis: {
+                    min:newMin_fft,
+                    max:newMax_fft
+                }
+            });
+        })
+        
     }
 
 
@@ -494,10 +500,15 @@ toggleUpdateButton.addEventListener('click', function () {
 
 
 // Resize charts on window resize
-window.onresize = function () {
+// window.onresize = function () {
+//     rawDisplacementChart.resize();
+//     fftDisplacementChart.resize();
+// };
+window.addEventListener('resize', ()=>{
     rawDisplacementChart.resize();
     fftDisplacementChart.resize();
-};
+})
+
 
 
 // Live Camera Feed

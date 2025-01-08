@@ -1,1 +1,1 @@
-conda activate wind-tunnel && python testo405i.py
+conda activate wind-tunnel && python testo405i_ble_data_server.py

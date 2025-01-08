@@ -15,13 +15,14 @@ import socket
 import datetime
 import re
 import struct
+import time
 # Initialize Flask and SocketIO for real-time communication
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 
 # Establish a TCP socket connection to the Arduino
-arduino_ip = '192.168.137.39'
+arduino_ip = '192.168.137.52'
 arduino_port = 8888
 arduino_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 arduino_socket.connect((arduino_ip, arduino_port))
@@ -30,7 +31,6 @@ arduino_socket.settimeout(1.0)  # Configure a timeout for the socket operations
 
 def process_and_emit_data():
     """Continuously fetch, process, and emit data from the Arduino.
-    
     This function runs in a background task, receiving displacement data from the Arduino,
     performing FFT on accumulated data to derive frequency components, and emitting the
     results to connected clients. It handles both the reception of raw data and its subsequent
@@ -43,21 +43,24 @@ def process_and_emit_data():
     while True:
         try:
             socketio.sleep(0)  # Emit data at 1ms intervals
-
+            #time.sleep(0.001)
+            
 
             # Attempt to receive data from Arduino
             response = arduino_socket.recv(4)
             displacement = struct.unpack('>f',response)
-            print(displacement)
+            print("displacement", displacement)
             if displacement:
                 data_point = float(displacement[0])
                 if data_point <= 200:
+                    # Removed [:-3] at the end of the line code
                     timestamp = datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]
                     socketio.emit('displacement_data', {'time': timestamp, 'value': data_point})
-
+                    #print("datapoint", data_point, "timestamp", timestamp)
 
                     # Store and process data for FFT
                     displacement_data.append(displacement)
+                    print(len(displacement_data))
                     if len(displacement_data) >= sampling_rate:
                         # Perform FFT and emit results
                         fft_result = np.fft.fft(displacement_data)
