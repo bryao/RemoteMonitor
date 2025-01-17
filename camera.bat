@@ -1,1 +1,1 @@
-conda activate wind-tunnel && python webcam_streaming_server.py
+conda activate wind-tunnel && python webcam.py

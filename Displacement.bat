@@ -1,1 +1,1 @@
-conda activate wind-tunnel && python displacement_data_stream.py
+conda activate wind-tunnel && python data_simulation.py
