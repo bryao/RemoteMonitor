@@ -503,7 +503,7 @@ socket.on('sin_wave', function (msg) {
                 //min:newMin,
                 //max:newMax
                 min: -350,
-                max:3830
+                max:32800
             }
         });
     }

@@ -32,7 +32,7 @@ function handleKeyPress(e) {
 }
 
 function sendData(speed) {
-
+    console.log(speed);
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "https://remotewtl_fancontrol.sfsuishm.net/fanSpeed?fanSpeed=" + speed, true);
     xhr.onreadystatechange = function (json) {
