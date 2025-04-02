@@ -361,8 +361,8 @@ setInterval(updateChart7, 500);
 var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));
 var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));
 
-var socket = io('https://remotewtl_displacement.sfsuishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
-// var socket = io('127.0.0.1:5002', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
+//var socket = io('https://remotewtl_displacement.sfsuishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
+var socket = io('127.0.0.1:5002', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
 
 
 
@@ -481,31 +481,36 @@ myChart9.setOption({
     }
 });
 socket.on('sin_wave', function (msg) {
+    //console.log(isUpdating)
     if (isUpdating) {
+        //console.log("inside if")
         if (data_displacement.length > 400) {
             data_displacement.shift();
         }
+
         data_displacement.push([msg.x, msg.y]);
         let yValue = data_displacement.map(pair=>pair[1]);
         //let newMin = Math.min(...yValue);
-       // let newMax = Math.max(...yValue);
+        //let newMax = Math.max(...yValue);
         //newMax =  msg.y + 50
         //newMin = msg.y - 50
         // Update the chart
-        myChart8.setOption({
-            xAxis: {
-                data: data_displacement.map(item => item[0]) // Update x-axis categories to match the current data
-            },
-            series: [{
-                data: data_displacement
-            }],
-            yAxis: {
-                //min:newMin,
-                //max:newMax
-                min: -350,
-                max:32800
-            }
-        });
+        requestAnimationFrame(() =>{
+            myChart8.setOption({
+                xAxis: {
+                    data: data_displacement.map(item => item[0]) // Update x-axis categories to match the current data
+                },
+                series: [{
+                    data: data_displacement
+                }],
+                yAxis: {
+                    //min:newMin,
+                    //max:newMax
+                    min: -200, //-350
+                    max:200 
+                }
+            });
+        })
     }
 });
 socket.on('sin_wave_fft', function (msg) {
@@ -523,6 +528,7 @@ socket.on('sin_wave_fft', function (msg) {
         let newMax_fft = Math.max(...yValue);
         // let newMax_fft = Math.max(...yValue);
         // Update the chart
+        requestAnimationFrame(() =>{
         myChart9.setOption({
             xAxis: {
                 data: data_displacement_fft.map(item => item[0]) // Update x-axis categories to match the current data
@@ -535,6 +541,7 @@ socket.on('sin_wave_fft', function (msg) {
                 max:newMax_fft
             }
         });
+    })
     }
 });
 

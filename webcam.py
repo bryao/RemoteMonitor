@@ -1,5 +1,3 @@
-# backend.py
-
 from flask import Flask
 from flask_socketio import SocketIO
 import eventlet
@@ -13,13 +11,16 @@ import base64
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 2)  # Set maximum buffer size
+
+frame_retrieval_delay = 0.00416  # Default frame retrieval delay in seconds (30 FPS)
+
 thread = None  # Initialize the thread variable
 
 def background_thread():
     """Generate sin wave data and emit to all clients."""
-    count = 0
     while True:
-        socketio.sleep(0.016)  # Emit data at 1ms intervals
+        socketio.sleep(frame_retrieval_delay)  # Use frame retrieval delay
         ret, frame = cap.read()
         if not ret:
             print("Error: failed to capture image")
@@ -42,4 +43,4 @@ def test_connect():
     start_background_thread()
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0',port=5001,debug=True)
+    socketio.run(app, host='0.0.0.0', port=5001, debug=True)
