@@ -1,62 +1,49 @@
-class FanControl {
-    constructor(fanSpeed) {
-        this._fanSpeed = fanSpeed;
+class Fan_control {
+    constructor(fan_speed) {
+        this._fan_speed = fan_speed;
     }
-    set fanSpeed(fanSpeed) {
-        this._fanSpeed = fanSpeed;
+    set fan_speed(fan_speed) {
+        this._fan_speed = fan_speed;
     }
-    get fanSpeed() {
-        return this._fanSpeed;
+    get fan_speed() {
+        return this._fan_speed;
     }
 }
-const fanControl = new FanControl(0);
+let fan_control = new Fan_control(0);
 
-let isSending = false; // Prevents multiple simultaneous sends
 
-async function validateInput() {
-    const input = document.getElementById("fanSpeed");
-    let x = Number(input.value);
-    if (isNaN(x) || x < 0 || x > 100) {
+function validateInput() {
+    var x = document.getElementById("fanSpeed").value;
+    if (x < 0 || x > 100) {
         showToast("Invalid input. Value must be between 0 and 100.", "error");
         return false;
     }
     showToast("Valid input. Sending data...", "success");
-
-    // Disable input temporarily
-    input.disabled = true;
-    await sendData(mapTo255PWM(x));
-    input.disabled = false;
+    x = mapTo255PWM(x);
+    sendData(x);
     return true;
 }
 
 function handleKeyPress(e) {
-    const key = e.keyCode || e.which;
-    if (key === 13) {
+    var key = e.keyCode || e.which;
+    if (key == 13) {
         validateInput();
     }
 }
 
-async function sendData(speed) {
-    if (isSending) {
-        console.warn("Already sending, wait...");
-        return;
-    }
-    isSending = true;
-
-    try {
-        const response = await fetch(`https://remotewtl_fancontrol.sfsuishm.net/fanSpeed?fanSpeed=${speed}`);
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
+function sendData(speed) {
+    console.log(speed);
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://remotewtl_fancontrol.ishm.net/fanSpeed?fanSpeed=" + speed, true);
+    xhr.onreadystatechange = function (json) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+ 
+            let fanSpeed = mapTo100Percentage(speed);
+            showToast("Data received. Fan speed: " + fanSpeed, "success");
+            fan_control.fan_speed = fanSpeed;
         }
-        const fanSpeed = mapTo100Percentage(speed);
-        showToast(`Data received. Fan speed: ${fanSpeed}`, "success");
-        fanControl.fanSpeed = fanSpeed;
-    } catch (error) {
-        console.error("Failed to send data:", error);
-        showToast("Failed to send data. Try again.", "error");
-    } finally {
-        isSending = false;
-    }
+    };
+    xhr.send();
 }
 
 function mapTo255PWM(value) {
@@ -68,11 +55,15 @@ function mapTo100Percentage(value) {
 }
 
 function showToast(message, type) {
-    const toast = document.getElementById("toast");
-    const toastBody = document.getElementById("toastBody");
+    var toast = document.getElementById("toast");
+    var toastBody = document.getElementById("toastBody");
     toast.className = "toast fade show";
     toastBody.innerHTML = message;
-    toastBody.className = type === "success" ? "toast-body text-success" : "toast-body text-danger";
+    if (type === "success") {
+        toastBody.className = "toast-body text-success";
+    } else {
+        toastBody.className = "toast-body text-danger";
+    }
     $('.toast').toast({ delay: 2000 });
     $('.toast').toast('show');
 }
