@@ -131,7 +131,7 @@ function updateChart5() {
     if (!isUpdating5) {
         return;
     }
-    $.get("https://remotewtl_windspeed.sfsuishm.net", function (data) {
+    $.get("https://remotewtl_windspeed.ishm.net", function (data) {
         var velocityValue = data.Velocity;
         myChart5.setOption({
             title: {
@@ -361,8 +361,8 @@ setInterval(updateChart7, 500);
 var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));
 var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));
 
-//var socket = io('https://remotewtl_displacement.sfsuishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
-var socket = io('127.0.0.1:5002', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
+var socket = io('https://remotewtl_displacement.ishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
+//var socket = io('127.0.0.1:5002', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
 
 
 
@@ -498,7 +498,8 @@ socket.on('sin_wave', function (msg) {
         requestAnimationFrame(() =>{
             myChart8.setOption({
                 xAxis: {
-                    data: data_displacement.map(item => item[0]) // Update x-axis categories to match the current data
+                    data: data_displacement.map(item => item[0]), // Update x-axis categories to match the current data
+                    name: 'Time(s)'
                 },
                 series: [{
                     data: data_displacement
@@ -507,7 +508,8 @@ socket.on('sin_wave', function (msg) {
                     //min:newMin,
                     //max:newMax
                     min: -200, //-350
-                    max:200 
+                    max:200,
+                    name: 'Displacement(mm)' 
                 }
             });
         })
@@ -531,14 +533,16 @@ socket.on('sin_wave_fft', function (msg) {
         requestAnimationFrame(() =>{
         myChart9.setOption({
             xAxis: {
-                data: data_displacement_fft.map(item => item[0]) // Update x-axis categories to match the current data
+                data: data_displacement_fft.map(item => item[0]), // Update x-axis categories to match the current data
+                name: 'Frequency (Hz)'
             },
             series: [{
                 data: data_displacement_fft
             }],
             yAxis: {
                 min:newMin_fft,
-                max:newMax_fft
+                max:newMax_fft,
+                name: 'Magnitude'
             }
         });
     })
@@ -562,8 +566,8 @@ window.onresize = function () {
 };
 
 
-var socket = io.connect('https://remotewtl_webcam.sfsuishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
-// var socket = io.connect('127.0.0.1:5001', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
+var socket = io.connect('https://remotewtl_webcam.ishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
+//var socket = io.connect('127.0.0.1:5001', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
 socket.on('connect', function () {
     console.log('Connected to the web server.');
 });

@@ -33,9 +33,8 @@ def background_thread():
 
 def start_background_thread():
     """Start the background thread if it's not already running."""
-    global thread
-    if thread is None:
-        thread = socketio.start_background_task(background_thread)
+
+    socketio.start_background_task(background_thread)
 
 @socketio.on('connect')
 def test_connect():

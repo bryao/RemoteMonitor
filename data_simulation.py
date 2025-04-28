@@ -44,7 +44,7 @@ def fetch_and_process_data():
             #print(not displacement)
             if displacement:
                 data_point = float(displacement[0])
-                print(len(displacementData))
+                #print(len(displacementData))
                 # 200
                 timestamp = datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]
                 displacementData.append({'x': timestamp, 'y': data_point})
@@ -55,6 +55,10 @@ def fetch_and_process_data():
 
                 # Process FFT when enough data is collected
                 if len(displacementData) >= sampling_rate:
+                    # for each item in array dispalcementData get the y value 
+                    # and put it into an array
+
+              
                     fft_result = np.fft.fft([d['y'] for d in displacementData])
                     freq = np.fft.fftfreq(len(displacementData), 1 / sampling_rate)
                     n = len(fft_result)
