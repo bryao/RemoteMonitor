@@ -371,10 +371,21 @@ var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));  /
 
 // === Displacement Chart Options ===
 const displacementOption = {
+  backgroundColor: '#f5f5f5',
   title: { text: 'Live Displacement' },
-  tooltip: { trigger: 'axis' },
-  xAxis: { type: 'category', name: 'Time', data: [] },
-  yAxis: { type: 'value', name: 'Displacement' },
+  tooltip: { 
+    trigger: 'axis',
+
+},
+  xAxis: {  
+    type: 'category',
+    name: 'Time', 
+    data: [] 
+},
+  yAxis: {
+     type: 'value', 
+     name: 'Displacement' 
+    },
   series: [{
     name: 'Displacement',
     type: 'line',
@@ -385,6 +396,7 @@ const displacementOption = {
 
 // === FFT Chart Options ===
 const fftOption = {
+  backgroundColor: '#f5f5f5',
   title: { text: 'FFT Magnitude Spectrum' },
   tooltip: { trigger: 'axis' },
   xAxis: { type: 'category', name: 'Frequency (Hz)', data: [] },
