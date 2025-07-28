@@ -13,7 +13,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Establish a TCP socket connection to the Arduino
-arduino_ip = '192.168.137.126'
+arduino_ip = '192.168.137.68'
 arduino_port = 8888
 arduino_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 arduino_socket.connect((arduino_ip, arduino_port))

@@ -358,212 +358,78 @@ function updateChart7() {
 }
 setInterval(updateChart7, 500);
 
-var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));
-var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));
 
+
+
+const MAX_POINTS = 250;
+let displacementData = [];
+let fftData = { x: [], y: [] };
+
+// === Initialize charts ===
+var myChart8 = echarts.init(document.getElementById('echartdisplaydata'));     // Displacement
+var myChart9 = echarts.init(document.getElementById('echartdisplayfftdata'));  // FFT
+
+// === Displacement Chart Options ===
+const displacementOption = {
+  title: { text: 'Live Displacement' },
+  tooltip: { trigger: 'axis' },
+  xAxis: { type: 'category', name: 'Time', data: [] },
+  yAxis: { type: 'value', name: 'Displacement' },
+  series: [{
+    name: 'Displacement',
+    type: 'line',
+    showSymbol: false,
+    data: []
+  }]
+};
+
+// === FFT Chart Options ===
+const fftOption = {
+  title: { text: 'FFT Magnitude Spectrum' },
+  tooltip: { trigger: 'axis' },
+  xAxis: { type: 'category', name: 'Frequency (Hz)', data: [] },
+  yAxis: { type: 'value', name: 'Magnitude' },
+  series: [{
+    name: 'Magnitude',
+    type: 'bar',
+    data: []
+  }]
+};
+
+// === Apply Options to Each Chart ===
+myChart8.setOption(displacementOption);
+myChart9.setOption(fftOption);
+
+// === Trim helper ===
+function trimArray(arr, max) {
+  return arr.length > max ? arr.slice(arr.length - max) : arr;
+}
+
+// === Socket.IO Listeners ===
 var socket = io('https://remotewtl_displacement.ishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
 //var socket = io('127.0.0.1:5002', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 });
 
+socket.on('sin_wave', (dataPoint) => {
+  displacementData.push(dataPoint);
+  displacementData = trimArray(displacementData, MAX_POINTS);
 
+  const xData = displacementData.map(d => d.x);
+  const yData = displacementData.map(d => d.y);
 
-socket.on('connect', function () {
-    console.log('Connected to the displacement server.');
-});
-var data_displacement = [];
-var data_displacement_fft = [];
-
-var isUpdating = true;
-
-var option8 = {
-    backgroundColor: '#f5f5f5',
-    title: {
-        text: 'Raw Displacement',
-        left: 'center', // Aligns the title to the center
-        top: '20', // Position from the top margin
-        textStyle: {
-            color: '#333',
-            fontSize: 18,
-            fontWeight: 'bold'
-        },
-        subtextStyle: {
-            color: '#666',
-            fontSize: 14
-        }
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'cross',
-            label: {
-                backgroundColor: '#6a7985'
-            }
-        }
-    },
-    grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
-    },
-    xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        scale: true,
-        splitLine: {
-            show: true,
-            lineStyle: {
-                color: '#ddd',
-                type: 'dashed'
-            }
-        },
-        axisLine: {
-            lineStyle: {
-                color: '#333'
-            }
-        }
-    },
-    yAxis: {
-        type: 'value',
-        boundaryGap: false,
-        scale: true,
-        splitLine: {
-            show: true,
-            lineStyle: {
-                color: '#ddd',
-                type: 'dashed'
-            }
-        },
-        axisLine: {
-            lineStyle: {
-                color: '#333'
-            }
-        },
-        min: 0,
-        max: 0
-    },
-    series: [{
-        type: 'line',
-        data: [],
-        symbolSize: 5,
-        animation: false,
-        itemStyle: {
-            color: '#c23531',
-            borderColor: '#222',
-            borderWidth: 1
-        },
-        emphasis: {
-            itemStyle: {
-                borderColor: '#c23531',
-                borderWidth: 2
-            }
-        }
-    }],
-    dataZoom: [
-        {
-            type: 'slider', // This is the most common type of dataZoom.
-            start: 0,      // Starting position of the dataZoom, 0% by default.
-            end: 100       // Ending position of the dataZoom, 100% by default.
-        },
-        {
-            type: 'inside', // This allows zooming by scrolling the mouse wheel.
-            start: 0,
-            end: 100
-        }
-    ],
-    roam: false, // This is necessary for the inside option to work
-};
-
-myChart8.setOption(option8);
-myChart9.setOption(option8);
-myChart9.setOption({
-    title: {
-        text: 'Displacement FFT',
-    }
-});
-socket.on('sin_wave', function (msg) {
-    //console.log(isUpdating)
-    if (isUpdating) {
-        //console.log("inside if")
-        if (data_displacement.length > 400) {
-            data_displacement.shift();
-        }
-
-        data_displacement.push([msg.x, msg.y]);
-        let yValue = data_displacement.map(pair=>pair[1]);
-        //let newMin = Math.min(...yValue);
-        //let newMax = Math.max(...yValue);
-        //newMax =  msg.y + 50
-        //newMin = msg.y - 50
-        // Update the chart
-        requestAnimationFrame(() =>{
-            myChart8.setOption({
-                xAxis: {
-                    data: data_displacement.map(item => item[0]), // Update x-axis categories to match the current data
-                    name: 'Time(s)'
-                },
-                series: [{
-                    data: data_displacement
-                }],
-                yAxis: {
-                    //min:newMin,
-                    //max:newMax
-                    min: -200, //-350
-                    max:200,
-                    name: 'Displacement(mm)' 
-                }
-            });
-        })
-    }
-});
-socket.on('sin_wave_fft', function (msg) {
-    if (isUpdating) {
-        data_displacement_fft = [];
-        for (let i = 0; i < msg.x.length; i++) {
-            if (msg.y[i] > 50000){
-                continue
-            }
-            
-            data_displacement_fft.push([msg.x[i], msg.y[i]]);
-        }
-        let yValue = data_displacement_fft.map(pair=>pair[1]);
-        let newMin_fft = Math.min(...yValue);
-        let newMax_fft = Math.max(...yValue);
-        // let newMax_fft = Math.max(...yValue);
-        // Update the chart
-        requestAnimationFrame(() =>{
-        myChart9.setOption({
-            xAxis: {
-                data: data_displacement_fft.map(item => item[0]), // Update x-axis categories to match the current data
-                name: 'Frequency (Hz)'
-            },
-            series: [{
-                data: data_displacement_fft
-            }],
-            yAxis: {
-                min:newMin_fft,
-                max:newMax_fft,
-                name: 'Magnitude'
-            }
-        });
-    })
-    }
+  myChart8.setOption({
+    xAxis: { data: xData },
+    series: [{ data: yData }]
+  });
 });
 
-document.getElementById('toggleUpdate').addEventListener('click', function () {
-    isUpdating = !isUpdating;
-    this.textContent = isUpdating ? 'Pause' : 'Resume';
-    if (isUpdating) {
-        socket.connect();  // Connect to the server if updating
-    } else {
-        socket.disconnect();  // Disconnect from the server if not updating
-    }
-});
+socket.on('sin_wave_fft', (data) => {
+  fftData = data;
 
-// Resize chart on container resize
-window.onresize = function () {
-    myChart8.resize();
-    myChart9.resize();
-};
+  myChart9.setOption({
+    xAxis: { data: fftData.x },
+    series: [{ data: fftData.y }]
+  });
+});
 
 
 var socket = io.connect('https://remotewtl_webcam.ishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
