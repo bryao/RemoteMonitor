@@ -1,115 +1,118 @@
-from flask import Flask
-from flask_socketio import SocketIO
-import eventlet
-import numpy as np
-import socket
+import asyncio
 import datetime
+import json
+import numpy as np
 import struct
-import signal 
-import sys 
+import socket
+import random
 
-# Initialize Flask and SocketIO for real-time communication
-app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+from fastapi import FastAPI
+import socketio
+
+# === SETTINGS ===
+BASE_SAMPLING_RATE = 250  # base Hz
+LOAD_FACTOR = 3  # simulate 3x load
+ACTUAL_RATE = BASE_SAMPLING_RATE * LOAD_FACTOR
+QUEUE_MAXSIZE = 2000
+
+# === FASTAPI + SOCKET.IO SETUP ===
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins='*')
+app = FastAPI()
+app.mount("/", socketio.ASGIApp(sio))
+
+# === IN-MEMORY QUEUES ===
+displacement_queue = asyncio.Queue(maxsize=QUEUE_MAXSIZE)
+fft_output = asyncio.Queue(maxsize=10)
+
+
 
 # Establish a TCP socket connection to the Arduino
-arduino_ip = '192.168.137.68'
-arduino_port = 8888
-arduino_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-arduino_socket.connect((arduino_ip, arduino_port))
-arduino_socket.settimeout(1) # Set timeout for socket operations
+ESP32_IP = '192.168.137.68'
+ESP32_PORT = 8888
 
-# Global storage for displacement and FFT data
-displacementData = []  # Stores raw displacement data
-fftData = {}  # Stores FFT-processed frequency and magnitude data
-sampling_rate = 250  # Define the sampling rate for FFT calculations
 
-def signalHandler(sig, frame):
-    print("Existing")
-    sys.exit(0)
 
-def fetch_and_process_data():
-    """Runs in the background, fetching displacement data, processing FFT, and storing results."""
-    global displacementData, fftData   
+# ========== ESP32 TCP READER ==========
+async def read_esp32():
 
-    while True:
-        try:
-            eventlet.sleep(0.01)  # controlling collecting displacement data speed
-            
 
-            # Receive displacement data from Arduino
-            response = arduino_socket.recv(4)
-            displacement = struct.unpack('>f', response)
-            print(displacement)
-            #print(not displacement)
-            if displacement:
-                data_point = float(displacement[0])
-                #print(len(displacementData))
-                # 200
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect((ESP32_IP, ESP32_PORT))
+        s.settimeout(1)  # Timeout for recv to prevent blocking
+        print("✅ Connected to ESP32")
+
+        while True:
+            try:
+                # Read 4 bytes (float32)
+                data = await asyncio.get_event_loop().run_in_executor(None, s.recv, 4)
+                if not data:
+                    continue
+
+                value = struct.unpack('>f', data)[0]  # Big-endian float
                 timestamp = datetime.datetime.now().strftime('%H:%M:%S.%f')[:-3]
-                displacementData.append({'x': timestamp, 'y': data_point})
+                await displacement_queue.put({'x': timestamp, 'y': value})
 
-                # Store displacement data
-                #x = time y = value
-                #print(displacementData)
+            except socket.timeout:
+                continue
+            except Exception as e:
+                print(f"⚠️ Error reading from ESP32: {e}")
+                await asyncio.sleep(1)  # Backoff on error
 
-                # Process FFT when enough data is collected
-                if len(displacementData) >= sampling_rate:
-                    # for each item in array dispalcementData get the y value 
-                    # and put it into an array
-
-              
-                    fft_result = np.fft.fft([d['y'] for d in displacementData])
-                    freq = np.fft.fftfreq(len(displacementData), 1 / sampling_rate)
-                    n = len(fft_result)
-                    magnitude = 2.0 / n * np.abs(fft_result[:n // 2])
-                    frequency = freq[:n // 2]
-
-                    # Store FFT data
-                    fftData = {'x': frequency.tolist(), 'y': magnitude.tolist()} #changed "frequencty" for x and the other for y
-                    displacementData.clear()  # Clear old data for new processing
-                    
-
-        except socket.timeout:
-            continue
-        except Exception as e:
-            print(f"Error: {e}")
+    except Exception as e:
+        print(f"❌ Could not connect to ESP32: {e}")
+        await asyncio.sleep(5)  # Retry loop could be added here
 
 
-@socketio.on('connect')
-def on_connect():
-    """Send stored data to the connected client in a background task."""
-    print('Client connected')
-    socketio.start_background_task(target=stream_data_to_client)
-
-def stream_data_to_client():
-    """Continuously send data to the connected client."""
+# === FFT PROCESSOR ===
+async def process_fft():
+    print("⚙️ FFT processor running")
+    buffer = []
     while True:
-        eventlet.sleep(0.025)  #0.025
-        # Small delay to prevent excessive CPU usage
+        data = await displacement_queue.get()
+        buffer.append(data)
 
-        if displacementData:
-            #print(displacementData[-1])
-            socketio.emit('sin_wave', displacementData[-1])  # Send latest displacement data
+        if len(buffer) >= BASE_SAMPLING_RATE:  # base FFT size (not multiplied)
+            y_vals = [d["y"] for d in buffer]
+            fft_result = np.fft.fft(y_vals)
+            freqs = np.fft.fftfreq(len(y_vals), 1 / BASE_SAMPLING_RATE)
+            n = len(fft_result)
+            magnitude = 2.0 / n * np.abs(fft_result[:n // 2])
+            frequency = freqs[:n // 2]
 
-        if fftData:
-            socketio.emit('sin_wave_fft', fftData)  # Send latest FFT result
+            fft_data = {"x": frequency.tolist(), "y": magnitude.tolist()}
+            await fft_output.put(fft_data)
+            buffer.clear()
+# === SOCKET.IO EMITTER ===
+async def emit_data_to_client():
+    print("📡 Socket.IO emitter running")
+    last_sent_fft = None
+    while True:
+        await asyncio.sleep(0.01)
 
-@socketio.on('disconnect')
-def on_disconnect():
-    """Handle client disconnection."""
-    print('Client disconnected')
+        if not displacement_queue.empty():
+            latest = displacement_queue._queue[-1]
+            await sio.emit("sin_wave", latest)
+
+        if not fft_output.empty():
+            fft_data = await fft_output.get()
+            if fft_data != last_sent_fft:
+                await sio.emit("sin_wave_fft", fft_data)
+                last_sent_fft = fft_data
+
+# === SOCKET.IO EVENTS ===
+@sio.event
+async def connect(sid, environ):
+    print(f"Client connected: {sid}")
+
+@sio.event
+async def disconnect(sid):
+    print(f"Client disconnected: {sid}")
 
 
-if __name__ == '__main__':
-    
-    # Start the data processing function as a background task
-    socketio.start_background_task(fetch_and_process_data)
-    # Launch the Flask-SocketIO server
-    socketio.run(app, host='0.0.0.0', port=5002, debug=False)
-
-
-    signal.signal(signal.SIGINT,signalHandler)
-    print("ctrl+c")
-    signal.pause()
-
+# === FASTAPI STARTUP ===
+@app.on_event("startup")
+async def startup_tasks():
+    asyncio.create_task(read_esp32())
+    asyncio.create_task(process_fft())
+    asyncio.create_task(emit_data_to_client())
