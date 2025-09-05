@@ -1,120 +1,203 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="./img/logo.png" />
 
+    <link rel="stylesheet" href="./css/jq22.css" />
     <link rel="stylesheet" href="./css/main1.css" />
     <link rel="stylesheet" href="./css/bootstrap.min.css" />
     <script src="js/updated_monitor_data.js"></script>
 
     <title>Remote Monitor</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="appIndex">
-        <header>
-            <nav class="container py-3">
-                <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-                    <img src="img/logo.png" class="header-icon" />
-                    <img src="img/UF_Logo.jpg" class="header-icon" />
-    
-                    <div class="text-center">
-                    <img src="img/title.png" class="img-fluid mb-1" style="max-width: 300px;" />
-                    <br />
-                    <span id="time">{{ year }}-{{ month }}-{{ date }}&nbsp;&nbsp; {{ hour }}:{{ minute }}:{{ second }}&nbsp;&nbsp; {{ strDate }}</span>
-                    </div>
-    
-                    <img src="img/NSF_Logo.jpg" class="header-icon" />
-                </div>
-            </nav>
-        </header>
+      <header>
+        <nav class="container py-3">
+          <div
+            class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3"
+          >
+            <img src="img/logo.png" class="header-icon" />
+            <img src="img/UF_Logo.jpg" class="header-icon" />
 
-
-
-
-        <div class="left-right-container">
-            <div id="left">
-                <div id="camera">
-                    <div id="container-live-camera">
-                        <img id="live-camera" style="width: 100%; height: 100%;"></iframe>
-                    </div>
-                </div>
-
-                <div class="row justify-content-center text-center" style="margin-top: 1rem;">
-                    <div id="estimatedWSpeed" class="col-12 col-md-4 mb-3">
-                        <div class="d-flex justify-content-center align-items-center mb-1">
-                            <img src="img/estimated-wind-icon.png" style="width: 30px; height: 30px; margin-right: 8px;" />
-                            <p class="subtitleText mb-0">Estimated Wind Speed (m/s)</p>
-                        </div>
-                        <div id="echartestwin"></div>
-                    </div>
-
-                    <div id="measuredWSpeed" class="col-12 col-md-4 mb-3">
-                        <div class="d-flex justify-content-center align-items-center mb-1">
-                            <img src="img/estimated-wind-icon.png" style="width: 30px; height: 30px; margin-right: 8px;" />
-                            <p class="subtitleText mb-0">Measured Wind Speed (m/s)</p>
-                        </div>
-                        <div id="echartactwin"></div>
-                    </div>
-
-                    <div id="vortexSheddingFreq" class="col-12 col-md-4 mb-3">
-                        <div class="d-flex justify-content-center align-items-center mb-1">
-                            <img src="img/frequency-icon.png" style="width: 30px; height: 30px; margin-right: 8px;" />
-                            <p class="subtitleText mb-0">Vortex Shedding Frequency (Hz)</p>
-                        </div>
-                        <div id="echartshedding"></div>
-                    </div>
-                </div>
+            <div class="text-center">
+              <img
+                src="img/title.png"
+                class="img-fluid mb-1"
+                style="max-width: 300px"
+              />
+              <br />
+              <span id="time"
+                >{{ year }}-{{ month }}-{{ date }}&nbsp;&nbsp; {{ hour }}:{{
+                minute }}:{{ second }}&nbsp;&nbsp; {{ strDate }}</span
+              >
             </div>
-        
-            <section id="right">
-                <div id="modelAndControl">
-                    <div id="fanControl">
-                        <div class="d-flex align-items-center mb-1">
-                            <img src="img/fan_logo.png" style="width: 30px; height: 30px; margin-right: 8px;" />
-                            <p class="subtitleText mb-0">Fan Control</p>
-                        </div>
 
-                        <input id="fanSpeed" type="number" class="form-control" min="0" max="100" onkeypress="handleKeyPress(event)">
-                        <div id="echartAqpf"></div>
-                        </div>
+            <img src="img/NSF_Logo.jpg" class="header-icon" />
+          </div>
+        </nav>
+      </header>
 
-                        <div id="model">
-                        <div class="d-flex align-items-center mb-1">
-                            <img src="img/model-icon.png" style="width: 30px; height: 30px; margin-right: 8px;" />
-                            <p class="subtitleText mb-0">Current Model</p>
-                        </div>
+      <div class="contentRow">
+        <div class="left-right-container">
+          <!-- ===== Left Section (Camera + Charts) ===== -->
+          <div id="left">
+            <!-- Live camera -->
+            <div id="camera">
+              <div id="container-live-camera">
+                <img id="live-camera" style="width: 100%; height: 100%" />
+              </div>
+            </div>
 
-                        <div class="dropdown mb-2">
-                            <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="modelDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select Model
-                            </button>
-
-                            <ul class="dropdown-menu w-100" aria-labelledby="modelDropdown">
-                            <li><a class="dropdown-item" href="#" onclick="changeImage('Square')">Square</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="changeImage('Round Corner')">Round Corner</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="changeImage('Corner Cut')">Corner Cut</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div>
-                        <img id="modelImage" src="img/model.png" style="width: 60%; height: 70%; margin-top: 10%;">
-                    </div>
+            <!-- Estimated Wind Speed & Frequency Charts -->
+            <div
+              class="row justify-content-center text-center"
+              style="margin-top: 1rem"
+            >
+              <div id="estimatedWSpeed" class="col-12 col-md-4 mb-3">
+                <div
+                  class="d-flex justify-content-center align-items-center mb-1"
+                >
+                  <img
+                    src="img/estimated-wind-icon.png"
+                    style="width: 30px; height: 30px; margin-right: 8px"
+                  />
+                  <p class="subtitleText mb-0">Estimated Wind Speed (m/s)</p>
                 </div>
-            </section>
+                <div id="echartestwin"></div>
+              </div>
+
+              <!-- Measured Wind Speed -->
+              <div id="measuredWSpeed" class="col-12 col-md-4 mb-3">
+                <div
+                  class="d-flex justify-content-center align-items-center mb-1"
+                >
+                  <img
+                    src="img/estimated-wind-icon.png"
+                    style="width: 30px; height: 30px; margin-right: 8px"
+                  />
+                  <p class="subtitleText mb-0">Measured Wind Speed (m/s)</p>
+                </div>
+                <div id="echartactwin"></div>
+              </div>
+
+              <!-- Vortex Shedding Frequency -->
+              <div id="vortexSheddingFreq" class="col-12 col-md-4 mb-2">
+                <div
+                  class="d-flex justify-content-center align-items-center mb-1"
+                >
+                  <img
+                    src="img/frequency-icon.png"
+                    style="width: 30px; height: 30px; margin-right: 8px"
+                  />
+                  <p class="subtitleText mb-0">
+                    Vortex Shedding Frequency (Hz)
+                  </p>
+                </div>
+                <div id="echartshedding"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== Right Section (Fan Control & Model) ===== -->
+          <section id="right">
+            <div id="modelAndControl">
+              <!-- Fan Control -->
+              <div id="fanControl">
+                <div class="d-flex align-items-center mb-1">
+                  <img
+                    src="img/fan_logo.png"
+                    style="width: 30px; height: 30px; margin-right: 8px"
+                  />
+                  <p class="subtitleText mb-0">Fan Control</p>
+                </div>
+
+                <input
+                  id="fanSpeed"
+                  type="number"
+                  class="form-control"
+                  min="0"
+                  max="100"
+                  onkeypress="handleKeyPress(event)"
+                />
+                <div id="echartAqpf"></div>
+              </div>
+
+              <!-- Current Model -->
+              <div id="model">
+                <div class="d-flex align-items-center mb-1">
+                  <img
+                    src="img/model-icon.png"
+                    style="width: 30px; height: 30px; margin-right: 8px"
+                  />
+                  <p class="subtitleText mb-0">Current Model</p>
+                </div>
+
+                <div class="dropdown mb-2">
+                  <button
+                    class="btn btn-secondary dropdown-toggle w-100"
+                    type="button"
+                    id="modelDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Select Model
+                  </button>
+
+                  <ul
+                    class="dropdown-menu w-100"
+                    aria-labelledby="modelDropdown"
+                  >
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        onclick="changeImage('Square')"
+                        >Square</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        onclick="changeImage('Round Corner')"
+                        >Round Corner</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        onclick="changeImage('Corner Cut')"
+                        >Corner Cut</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <img
+                  id="modelImage"
+                  src="img/model.png"
+                  style="width: 60%; height: 70%; margin-top: 10%"
+                />
+              </div>
+            </div>
+          </section>
         </div>
 
+        <!-- Displacement & FFT Charts -->
         <section id="dispCharts">
-            <div id="echartdisplaydata"></div>
+          <div id="echartdisplaydata"></div>
 
-            <div id="echartdisplayfftdata"></div>
+          <div id="echartdisplayfftdata"></div>
         </section>
+      </div>
     </div>
-
-
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/jquery.min.js"></script>
@@ -123,26 +206,38 @@
     <script src="js/walden.js"></script>
     <script src="js/roma.js"></script>
     <script src="js/jquery.countUp.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/date.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="js/echart.js"></script>
     <script>
-        var retryCount = 0;
-        var maxRetries = 5;
+      var retryCount = 0;
+      var maxRetries = 5;
 
-        document.getElementById('live-camera').onerror = function () {
-            if (retryCount < maxRetries) {
-                console.log('Stream lost. Attempting to reconnect... Attempt number: ' + (retryCount + 1));
-                showToast('Stream lost. Attempting to reconnect... Attempt number: ' + (retryCount + 1), 'failed');
-                setTimeout(() => {
-                this.src = this.src;
-                retryCount++;
-                }, 2000); // 1000 milliseconds = 1 second
-            } else {
-                console.log('Max retry attempts reached. Stopping reconnect attempts.');
-                showToast('Max retry attempts reached. Stopping reconnect attempts.', 'failed');
-            }
-        };
+      document.getElementById("live-camera").onerror = function () {
+        if (retryCount < maxRetries) {
+          console.log(
+            "Stream lost. Attempting to reconnect... Attempt number: " +
+              (retryCount + 1)
+          );
+          showToast(
+            "Stream lost. Attempting to reconnect... Attempt number: " +
+              (retryCount + 1),
+            "failed"
+          );
+          setTimeout(() => {
+            this.src = this.src;
+            retryCount++;
+          }, 2000); // 1000 milliseconds = 1 second
+        } else {
+          console.log(
+            "Max retry attempts reached. Stopping reconnect attempts."
+          );
+          showToast(
+            "Max retry attempts reached. Stopping reconnect attempts.",
+            "failed"
+          );
+        }
+      };
     </script>
-</body>
+  </body>
 </html>
