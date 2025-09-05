@@ -1,70 +1,67 @@
-@media (max-width: 765px) {
-  .header-icon {
-    display: none !important;
-  }
-
-  #left {
-    height: 400px !important;
-  }
-}
-
-*{
-  background: rgba(14, 18, 45, 1);
+/* Global Styles */
+* {
+  background-color: rgba(14, 18, 45, 1);
   color: #dcdcdc;
-
 }
 
+/* Header Icon */
 .header-icon {
   max-width: 80px;
   height: auto;
 }
 
-
+/* Layout Containers */
 .left-right-container {
-  display: flex;
-  width: 80%; 
-  margin: 0 auto; 
+  display: flex;  
+  width: 100%;
+  margin: 2% auto;
+  justify-content: center;
+  gap: 25px; /* Space between left and right sections */
+}
+
+#right,
+#left {
+  height: 34rem;
+}
+
+#left {
+  /* Left takes ~70% width */
+  flex: 0 0 56%;  
+  height: auto;
+}
+
+#right #modelImage {
   justify-content: center;
 }
 
+/*  Images */
 #modelImage {
   display: block;
-  margin: 20px auto 0 auto; 
+  margin: 20px auto 0 auto;
   width: 60%;
   max-width: 300px;
 }
-
 
 #live-camera {
   width: 100%;
 }
 
-#right, #left {
-    margin: 2%;
-    height: 35rem;
-}
-
-#left {
-    height: auto;
-}
-
-#right #modelImage {
-    justify-content: center;
-}
-
+/* Card Components (Fan Control & Model) */
 #fanControl,
 #model {
   background: rgba(30, 35, 60, 0.7);
   border-radius: 16px;
   padding: 1rem;
+  margin: 10px;
+
+  /* Glassmorphism effect */
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin: 10px;
 }
-
 
 #fanControl:hover,
 #model:hover {
@@ -72,23 +69,24 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
+/*  Dropdown Menus */
 .dropdown-menu {
-  background-color: rgba(14, 18, 45, 1) !important; 
+  background-color: rgba(14, 18, 45, 1) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
 }
 
 .dropdown-item {
-  color: #dcdcdc !important;  
+  color: #dcdcdc !important;
 }
-
 
 .dropdown-item:hover,
 .dropdown-item:focus {
-  background-color: rgba(255, 255, 255, 0.15) !important; 
-  color: #ffffff !important; 
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
 }
 
+/* Ensure inner elements in cards are styled */
 #fanControl .d-flex,
 #model .d-flex,
 #fanControl .subtitleText,
@@ -98,27 +96,52 @@
   background: #191e37;
 }
 
+/*  ECharts Containers (Small Bars) */
 #echartshedding,
 #echartactwin,
 #echartestwin,
 #echartAqpf {
-  margin: 5%;
-  width: 100%;      
-  height: 60px;     
+  margin-top: 5%;
+  width: 100%;
+  height: 100px; /*It was at 60px*/
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
 }
 
-#echartAqpf{
-  background-color: #191e37;
+#echartAqpf {
+  background: #191e37;
 }
+
+/* Force canvas backgrounds inside charts to be transparent */
+#echartshedding *,
+#echartactwin *,
+#echartestwin *,
+#echartAqpf * {
+  background: transparent !important;
+}
+
+/* ECharts Containers (Main Charts) */
+#vortexSheddingFreq,
+#measuredWSpeed,
+#estimatedWSpeed {
+  height: 100%;
+}
+
 
 #echartdisplaydata,
 #echartdisplayfftdata {
-  width: 100%;
-  max-width: 950px;
-  height: 400px;
-  margin: 20px auto;
+  max-width: 1250px;
+  margin: 0 auto;   
+  display: block;   
+  width: 80%;      
+  height: 400px; 
 }
 
-#dispCharts{
-  padding-top: 13rem;
+#dispCharts {
+  padding-top: 35vh;
+  height: 155vh; 
 }
