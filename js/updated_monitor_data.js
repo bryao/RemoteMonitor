@@ -15,10 +15,10 @@ let fan_control = new Fan_control(0);
 function validateInput() {
     var x = document.getElementById("fanSpeed").value;
     if (x < 0 || x > 100) {
-        showToast("Invalid input. Value must be between 0 and 100.", "error");
+        //showToast("Invalid input. Value must be between 0 and 100.", "error");
         return false;
     }
-    showToast("Valid input. Sending data...", "success");
+    //showToast("Valid input. Sending data...", "success");
     x = mapTo255PWM(x);
     sendData(x);
     return true;
@@ -39,7 +39,7 @@ function sendData(speed) {
         if (xhr.readyState === 4 && xhr.status === 200) {
  
             let fanSpeed = mapTo100Percentage(speed);
-            showToast("Data received. Fan speed: " + fanSpeed, "success");
+            //showToast("Data received. Fan speed: " + fanSpeed, "success");
             fan_control.fan_speed = fanSpeed;
         }
     };
@@ -54,17 +54,17 @@ function mapTo100Percentage(value) {
     return Math.round((value / 255) * 100);
 }
 
-function showToast(message, type) {
-    var toast = document.getElementById("toast");
-    var toastBody = document.getElementById("toastBody");
-    toast.className = "toast fade show";
-    toastBody.innerHTML = message;
-    if (type === "success") {
-        toastBody.className = "toast-body text-success";
-    } else {
-        toastBody.className = "toast-body text-danger";
-    }
-    $('.toast').toast({ delay: 2000 });
-    $('.toast').toast('show');
-}
+// function showToast(message, type) {
+//     var toast = document.getElementById("toast");
+//     var toastBody = document.getElementById("toastBody");
+//     toast.className = "toast fade show";
+//     toastBody.innerHTML = message;
+//     if (type === "success") {
+//         toastBody.className = "toast-body text-success";
+//     } else {
+//         toastBody.className = "toast-body text-danger";
+//     }
+//     $('.toast').toast({ delay: 2000 });
+//     $('.toast').toast('show');
+// }
 

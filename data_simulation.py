@@ -27,7 +27,7 @@ fft_output = asyncio.Queue(maxsize=10)
 
 
 # Establish a TCP socket connection to the Arduino
-ESP32_IP = '192.168.137.68'
+ESP32_IP = '192.168.137.67'
 ESP32_PORT = 8888
 
 
@@ -93,7 +93,7 @@ async def emit_data_to_client():
         if not displacement_queue.empty():
             latest = displacement_queue._queue[-1]
             await sio.emit("sin_wave", latest)
-
+        
         if not fft_output.empty():
             fft_data = await fft_output.get()
             if fft_data != last_sent_fft:
