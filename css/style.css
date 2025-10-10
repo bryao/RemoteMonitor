@@ -1,0 +1,356 @@
+/* Global Styles */
+* {
+  background-color: rgba(14, 18, 45, 1);
+  color: #dcdcdc;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Header Icon */
+.header-icon {
+  max-width: 80px;
+  height: auto;
+}
+
+/* Layout Containers */
+/* .left-right-container {
+  display: flex;
+  width: 100%;
+  margin: 2% auto;
+  justify-content: center;
+  gap: 25px; 
+  /* Space between left and right sections */
+  /* flex-wrap: wrap;  */
+  /* allow wrap for smaller screens */
+/* } */
+
+/* #right, */
+/* #left { */
+  /* height: 34rem; */
+/* } */
+
+/* #left { */
+  /* Left takes ~70% width */
+  /* flex: 0 0 56%; */
+  /* height: auto; */
+/* } */ 
+
+.left-right-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+#left {
+  flex: 1 1 55%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  /* gap: 2rem; */
+}
+
+#right {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* gap: 2rem; */
+}
+
+.chart-group {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  /* gap: 1.5rem;s */
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
+  margin: 1.5rem auto 0;
+  flex-wrap: wrap; /* allows wrapping when screen is narrow */
+}
+
+/* Each small chart box */
+.chart-box {
+  flex: 1 1 30%; /* take up roughly 1/3 of row each */
+  min-width: 280px;
+  max-width: 400px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.5rem;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  height: auto;
+}
+
+#right #modelImage {
+  justify-content: center;
+}
+
+/*  Images */
+#modelImage {
+  display: block;
+  margin: 20px auto 0 auto;
+  width: 60%;
+  max-width: 300px;
+}
+
+#video {
+  width: 80%;
+  max-height: 300px;
+  border-radius: 8px;
+}
+
+#camera {
+  width: 80%;
+}
+/* Card Components (Fan Control & Model) */
+#fanControl,
+#model {
+  background: rgba(30, 35, 60, 0.7);
+  border-radius: 16px;
+  padding: 1rem;
+  margin: 10px;
+
+  /* Glassmorphism effect */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#fanControl:hover,
+#model:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/*  Dropdown Menus */
+.dropdown-menu {
+  background-color: rgba(14, 18, 45, 1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dropdown-item {
+  color: #dcdcdc !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Ensure inner elements in cards are styled */
+#fanControl .d-flex,
+#model .d-flex,
+#fanControl .subtitleText,
+#model .subtitleText,
+#fanControl img,
+#model img {
+  background: #191e37;
+}
+
+/*  ECharts Containers (Small Bars) */
+#echartshedding,
+#echartactwin,
+#echartestwin,
+#echartAqpf {
+  margin-top: 5%;
+  width: 100%;
+  height: 95px;
+   /*It was at 60px*/
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+}
+
+#echartAqpf {
+  background: #191e37;
+}
+
+/* Force canvas backgrounds inside charts to be transparent */
+#echartshedding *,
+#echartactwin *,
+#echartestwin *,
+#echartAqpf * {
+  background: transparent !important;
+}
+
+/* ECharts Containers (Main Charts) */
+#vortexSheddingFreq,
+#measuredWSpeed,
+#estimatedWSpeed {
+  height: 100%;
+}
+
+/* #echartdisplaydata,
+#echartdisplayfftdata {
+  max-width: 1250px;
+  margin: 0 auto;
+  display: block;
+  width: 80%;
+  height: 400px;
+} */
+
+#dispCharts {
+  padding-top: 2rem;   /* instead of fixed vh padding */
+  height: auto;        /* let it grow naturally */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;           /* space between the two charts */
+}
+
+#echartdisplaydata,
+#echartdisplayfftdata {
+  width: 100%;
+  max-width: 1250px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+/* ========== RESPONSIVE FIXES ========== */
+
+/* Tablets (≤ 992px) */
+@media (max-width: 992px) {
+  /* Stack left and right vertically */
+  .left-right-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #left, #right {
+    flex: 1 1 100%;
+    width: 95%;
+    height: auto;
+  }
+
+  #video {
+    width: 100%;
+    max-height: 250px;
+  }
+
+  #vortexChart{
+    visibility: hidden;
+    position: relative;
+  }
+
+  #vortexChart::after{
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "Vortex Shedding Freq. (Hz)";
+  }
+
+  #echartshedding,
+  #echartactwin,
+  #echartestwin,
+  #echartAqpf {
+    height: 95px; /*It was at 60px*/
+  }
+
+  /* Charts slightly smaller */
+  #echartdisplaydata,
+  #echartdisplayfftdata {
+    width: 90%;
+    height: 350px;
+  }
+
+  #dispCharts {
+    padding-top: 0;
+  }
+
+  /*  Images */
+  #modelImage {
+    display: block;
+    max-height: 40%;
+    max-width: 20%;
+  }
+
+  .header-icon {
+    max-width: 60px;
+  }
+}
+
+/* Phones (≤ 600px) */
+@media (max-width: 600px) {
+  /* Compact header layout */
+  header .d-flex {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .header-icon {
+    max-width: 50px;
+  }
+
+  #time {
+    font-size: 0.85rem;
+  }
+
+  /* Stack and fit everything nicely */
+  #left, #right {
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  #video {
+    max-height: 200px;
+    width: 100%;
+  }
+
+  /* Smaller charts */
+  #echartshedding,
+  #echartactwin,
+  #echartestwin,
+  #echartAqpf {
+    height: 60px !important;
+  }
+
+  /*  Images */
+  #modelImage {
+    max-height: 46%;
+    max-width: 40%;
+  }
+
+  #echartdisplaydata,
+  #echartdisplayfftdata {
+    height: 250px;
+  }
+
+  /* Make cards tighter */
+  #fanControl,
+  #model {
+    padding: 0.8rem;
+    margin: 8px 0;
+  }
+
+  #modelImage {
+    width: 60%;
+  }
+
+  /* Reduce spacing */
+  .left-right-container {
+    gap: 10px;
+  }
+}
