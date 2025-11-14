@@ -27,7 +27,7 @@ fft_output = asyncio.Queue(maxsize=10)
 
 
 # Establish a TCP socket connection to the Arduino
-ESP32_IP = '192.168.137.67'
+ESP32_IP = '192.168.137.245'
 ESP32_PORT = 8888
 
 

@@ -449,15 +449,15 @@ window.addEventListener('resize', () => {
 });
 
 
-var socket = io.connect('https://remotewtl_webcam.ishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
-//var socket = io.connect('127.0.0.1:5001', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
-socket.on('connect', function () {
-    console.log('Connected to the web server.');
-});
+// var socket = io.connect('https://remotewtl_webcam.ishm.net', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
+// //var socket = io.connect('127.0.0.1:5001', { reconnectionAttempts: 5, reconnectionDelay: 1000, reconnectionDelayMax: 5000, timeout: 20000 }); // Ensure this matches the address your Flask app is running on
+// socket.on('connect', function () {
+//     console.log('Connected to the web server.');
+// });
 
-socket.on('frame', function (data) {
-    document.getElementById('live-camera').src = "data:image/jpeg;base64," + data.data;
-});
+// socket.on('frame', function (data) {
+//     document.getElementById('live-camera').src = "data:image/jpeg;base64," + data.data;
+// });
 
 
 
